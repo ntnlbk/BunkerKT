@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:16-alpine
+    container_name: bunker_postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bunker_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d bunker_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db_seeder:
+    image: python:3.11-slim
+    container_name: bunker_seeder
+    volumes:
+      - .:/app
+    working_dir: /app
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    command: >
+      bash -c "
+        pip install --no-cache-dir psycopg2-binary &&
+        python scripts/seed_db.py
+      "
+
+  app:
+    build: .
+    container_name: bunker_app
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_NAME=bunker_db
+      - DB_USER=root
+      - DB_PASSWORD=root
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

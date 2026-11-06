@@ -1,0 +1,12 @@
+Bunker: Duration: 12 months Area: 240 sq. m. Food supplies and sleeping accommodations for the entire stay in the bunker
+Bunker: Duration: 20 months Area: 110 sq. m. Food supplies and sleeping accommodations for 16 months. The bunker is located inside a mountain
+Bunker: Duration: 14 months Area: 200 sq. m. Food supplies and sleeping accommodations for the entire stay in the bunker
+Bunker: Duration: 25 months Area: 180 sq. m. Food supplies and sleeping accommodations for the entire stay in the bunker Additional information: Swimming pool and spa. Kitchen and dining area
+Bunker: Duration: 14 months Area: 310 sq. m. Food supplies and sleeping accommodations for the entire stay in the bunker
+Bunker: Duration: 42 months Area: 340 sq. m. Food supplies and sleeping accommodations
+Bunker: Duration: 24 months Area: 260 sq. m. Food supplies and sleeping accommodations for the entire stay in the bunker. The bunker is located on elevated terrain
+Duration: 17 months Area: 190 sq. m. Food supplies for 10 months and sleeping accommodations for the entire stay in the bunker
+Bunker: Duration: 18 months Area: 320 sq. m. Food supplies and sleeping accommodations for the entire stay in the bunker
+Bunker: Duration: 16 months Area: 40 sq. m. Food supplies and sleeping accommodations for 10 months of the stay in the bunker
+Bunker: Emergency shelter. Intended for a 12-month stay. Food supplies are available for only 2 months
+Bunker: Duration: 24 months Area: 160 sq. m. Food supplies and sleeping accommodations for 16 months. The bunker is located in an underground metro system
