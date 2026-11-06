@@ -7,7 +7,7 @@ group = "com.example"
 version = "0.0.1"
 
 application {
-    mainClass.set("com.ntnlbk.BunkerAppKt")
+    mainClass.set("com.ntnlbk.presentation.BunkerAppKt")
 }
 
 repositories {
@@ -20,14 +20,18 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.12")
     implementation("ch.qos.logback:logback-classic:1.4.14")
 
-    // Драйвер PostgreSQL и пулинг соединений HikariCP
+    // PostgreSQL and HikariCP
     implementation("org.postgresql:postgresql:42.7.3")
     implementation("com.zaxxer:HikariCP:5.1.0")
 
-    // ORM Exposed для работы с БД на Kotlin
+    // ORM Exposed
     implementation("org.jetbrains.exposed:exposed-core:0.50.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.50.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.50.1")
+
+    // Ktor for DI
+    implementation("io.insert-koin:koin-ktor:3.5.6")
+    implementation("io.insert-koin:koin-logger-slf4j:3.5.6")
 }
 
 java {
