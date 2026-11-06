@@ -2,13 +2,14 @@
 ## Description
 
 ## Docker
+- Start all containers and seed data:
+```
+docker compose up --build
+```
+
 - Stop and delete all containiers and volumes:
 ```
 docker compose down -v
-```
-- Start all containers and seed data:
-```
-docker compose up -d
 ```
 
 - Clear cache

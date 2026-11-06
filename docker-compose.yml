@@ -48,6 +48,8 @@ services:
     depends_on:
       postgres_db:
         condition: service_healthy
+      db_seeder:
+        condition: service_completed_successfully
 
 volumes:
   postgres_data:

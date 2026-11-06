@@ -1,9 +1,9 @@
 package com.ntnlbk
 
 import io.ktor.server.application.*
-import io.ktor.server.engine.*
+import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.staticResources
-import io.ktor.server.netty.*
+import io.ktor.server.netty.Netty
 import io.ktor.server.routing.*
 
 fun main() {
@@ -16,6 +16,7 @@ fun Application.configureRouting() {
     routing {
         staticResources("/", "static") {
             default("index.html")
+            println("Hello World!")
         }
     }
 }
