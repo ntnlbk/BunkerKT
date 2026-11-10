@@ -4,10 +4,8 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.staticResources
 import com.ntnlbk.di.appModule
-import com.ntnlbk.domain.DummyUseCase
 import io.ktor.server.netty.Netty
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 
 fun main() {
@@ -24,8 +22,8 @@ fun Application.configureRouting() {
         staticResources("/", "static") {
             default("index.html")
             println("Hello World!")
-            val getBaggageUseCase by inject<DummyUseCase>()
-            println(getBaggageUseCase("PW"))
+//            val getBaggageUseCase by inject<DummyUseCase>()
+//            println(getBaggageUseCase("PW"))
         }
     }
 }
