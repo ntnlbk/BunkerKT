@@ -6,16 +6,16 @@ data class Player(
     val biology: PlayerTrait,
     val age: PlayerTrait,
     val profession: PlayerTrait,
-    val workExperience: Int,
+    val workExperience: PlayerTrait,
     val health: PlayerTrait,
-    val healthScore: HealthScore,
+    val healthScore: PlayerTrait,
     val hobby: PlayerTrait,
     val phobia: PlayerTrait,
     val baggage: PlayerTrait,
     val factOne: PlayerTrait,
     val factTwo: PlayerTrait,
     val specialCards: List<String>,
-    val votesFromPlayers: List<Int>,
+    val votesFromPlayers: List<Int> = listOf(),
     val votesAgainst: Int = -1,
-    val isAlive: Boolean
+    val isAlive: Boolean = true
 )

@@ -1,6 +1,5 @@
 package com.ntnlbk.domain.repository
 
-import com.ntnlbk.domain.model.Biology
 import com.ntnlbk.domain.model.Room
 
 interface RoomRepository {

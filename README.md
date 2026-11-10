@@ -37,9 +37,9 @@ SELECT * FROM hobby;
 ```
 
 ## Cloudflare
-- Create a public tunnel to port 8000
+- Create a public tunnel to port 8080
 ```
-cloudflared tunnel --url http://localhost:8000
+cloudflared tunnel --url http://localhost:8080
 ```
 
 

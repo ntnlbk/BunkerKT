@@ -12,7 +12,7 @@ DB_CONFIG = {
 }
 
 def seed_database():
-    data_dir = "scripts/data-en"
+    data_dir = "scripts/data-ru"
     
     if not os.path.exists(data_dir):
         print(f"Error: The directory '{data_dir}' does not exist.")
