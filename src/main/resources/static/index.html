@@ -253,30 +253,6 @@
 </div>
 
 <script>
-    const FASTAPI_URL = "http://localhost:8000";
-
-    async function checkBackendStatus() {
-        const statusDot = document.getElementById('apiStatusDot');
-        const statusText = document.getElementById('apiStatusText');
-
-        try {
-            const response = await fetch(`${FASTAPI_URL}/`, { method: 'GET' });
-            if (response.ok) {
-                statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
-                statusText.className = "text-emerald-400";
-                statusText.innerText = "ONLINE";
-            } else {
-                throw new Error("API returned status error");
-            }
-        } catch (err) {
-            statusDot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
-            statusText.className = "text-red-400";
-            statusText.innerText = "DISCONNECTED";
-        }
-    }
-
-    checkBackendStatus();
-
     function openModal(id) {
         const modal = document.getElementById(id);
         const card = modal.querySelector('.modal-card');
@@ -306,10 +282,10 @@
         const roomCode = document.getElementById('generatedCode').value.trim();
 
         try {
-            const response = await fetch('/api/lobbies/create', {
+            const response = await fetch('/api/rooms/create', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ host_name: hostName, room_code: roomCode })
+                body: JSON.stringify({ hostNickname: hostName, code: roomCode })
             });
 
             const data = await response.json();
@@ -318,13 +294,13 @@
                 throw new Error(data.message || "Failed to create lobby");
             }
 
-            sessionStorage.setItem("roomCode", data.room_code);
-            sessionStorage.setItem("playerName", data.host_name);
+            sessionStorage.setItem("roomCode", data.code);
+            sessionStorage.setItem("playerName", hostName);
 
-            showToast(`Lobby ${data.room_code} created! Entering bunker...`, 'fa-circle-check');
+            showToast(`Lobby ${data.code} created! Entering bunker...`, 'fa-circle-check');
 
             setTimeout(() => {
-                window.location.href = `lobby?code=${encodeURIComponent(data.room_code)}&player=${encodeURIComponent(data.host_name)}`;
+                window.location.href = `/lobby/${data.code}`;
             }, 800);
 
         } catch (err) {

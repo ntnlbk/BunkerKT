@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "1.9.22"
     application
 }
 
@@ -29,9 +30,13 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.50.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.50.1")
 
-    // Ktor for DI
+    // Koin for DI
     implementation("io.insert-koin:koin-ktor:3.5.6")
     implementation("io.insert-koin:koin-logger-slf4j:3.5.6")
+
+    // Serialization for REST API
+    implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.8")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.8")
 }
 
 java {
