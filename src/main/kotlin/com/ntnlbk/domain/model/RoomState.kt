@@ -6,6 +6,8 @@ sealed class RoomState {
     data class Game(
         val players: List<Player>,
         val gameStage: GameStage,
-
+        val catastropheDescription: String,
+        val bunkerDescription: String,
+        val bunkerInventory: String
     ): RoomState()
 }

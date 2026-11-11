@@ -1,19 +1,38 @@
 package com.ntnlbk.data.repository
 
 import com.ntnlbk.domain.model.Room
+import com.ntnlbk.domain.model.RoomState
+import com.ntnlbk.domain.model.User
 import com.ntnlbk.domain.repository.RoomRepository
+import java.util.concurrent.ConcurrentHashMap
 
-class RoomRepositoryImpl: RoomRepository {
-    override fun createRoom(code: String, hostNickname: String): Room {
-        TODO("Not yet implemented")
+class RoomRepositoryImpl : RoomRepository {
+
+    private val rooms: ConcurrentHashMap<String, Room> = ConcurrentHashMap()
+
+    override fun createRoom(code: String, gm: User): Room {
+        val room = Room(
+            code = code,
+            hostNickname = gm.nickname,
+            users = mutableListOf(gm),
+            RoomState.Lobby
+        )
+        rooms[code] = room
+        return room
     }
 
     override fun getRoom(code: String): Room? {
-        TODO("Not yet implemented")
+        return rooms[code]
     }
 
-    override fun addPlayerToRoom(code: String, playerNickname: String): Room {
-        TODO("Not yet implemented")
+    override fun addUserToRoom(code: String, user: User): Room {
+        val room = rooms[code] ?: throw IllegalArgumentException("Room with code $code doesn't exist")
+        synchronized(room) {
+            if (room.users.none { it.nickname == user.nickname }) {
+                room.users.add(user)
+            }
+        }
+        return room
     }
 
 }
