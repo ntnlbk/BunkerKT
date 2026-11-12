@@ -1,10 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUNKER | Waiting Room</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Rajdhani', sans-serif; }
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+    </style>
 </head>
-<body>
+<body class="h-full flex flex-col justify-center items-center bg-slate-950 text-slate-200 p-6">
+<div class="max-w-md w-full bg-slate-900 border-2 border-amber-500/80 rounded-2xl p-8 text-center shadow-[0_0_30px_rgba(245,158,11,0.3)]">
+    <i class="fa-solid fa-biohazard text-amber-500 text-4xl animate-pulse mb-4"></i>
+    <h1 class="text-3xl font-extrabold text-amber-400 font-mono mb-2">BUNKER LOBBY</h1>
 
+    <div class="bg-slate-950 border border-slate-800 rounded-lg p-4 my-4">
+        <p class="text-xs text-slate-400 font-mono uppercase">Room Code</p>
+        <p id="displayRoomCode" class="text-3xl font-mono font-bold text-amber-500 tracking-widest">---</p>
+    </div>
+
+    <div class="text-left my-6">
+        <p class="text-xs font-mono text-slate-400 uppercase mb-2">Connected Survivors</p>
+        <ul id="users" class="space-y-2 font-mono text-sm">
+            <!-- Players loaded via JS -->
+        </ul>
+    </div>
+
+    <!-- Start Game Button (Visible only to Game Master) -->
+    <div id="gmControls" class="mt-4 hidden">
+        <button onclick="startGame()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-lg tracking-wider font-mono text-base shadow-amber-glow transition-colors flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-play"></i>
+            <span>START GAME</span>
+        </button>
+    </div>
+
+    <button onclick="window.location.href='/'" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs rounded-lg transition-colors">
+        LEAVE BUNKER
+    </button>
+</div>
+
+<script>
+    const roomCode = sessionStorage.getItem('roomCode');
+    const currentUsername = sessionStorage.getItem('playerName');
+
+    document.getElementById('displayRoomCode').innerText = roomCode || "UNKNOWN";
+
+    let ws;
+    let myCurrentRole = 'player'; // Track the role of the logged-in user
+
+    // 1. Establish WebSocket Connection in the Waiting Room
+    // function initWebSocket() {
+    //     if (!roomCode || !currentUsername) return;
+    //
+    //     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    //     ws = new WebSocket(`${protocol}//${window.location.host}/ws/${roomCode}/${encodeURIComponent(currentUsername)}`);
+    //
+    //     ws.onmessage = (event) => {
+    //         const data = JSON.parse(event.data);
+    //
+    //         if (data.type === "GAME_STARTED") {
+    //             if (data.game_state) {
+    //                 sessionStorage.setItem('gameState', JSON.stringify(data.game_state));
+    //             }
+    //             redirectToGamePage();
+    //         }
+    //     };
+    //
+    //     ws.onclose = () => {
+    //         // Attempt reconnection after a short delay
+    //         setTimeout(initWebSocket, 2000);
+    //     };
+    // }
+
+    async function fetchLobbyPlayers() {
+        if (!roomCode) return;
+
+        try {
+            const res = await fetch(`/lobby/${roomCode}/players`);
+            if (!res.ok) throw new Error("Failed to load players");
+
+            const data = await res.json();
+            const playerList = document.getElementById('users');
+            const gmControls = document.getElementById('gmControls');
+
+            playerList.innerHTML = data.users.map(p => {
+                const isMe = p.nickname === currentUsername;
+                const role = (p.role || 'player').toLowerCase();
+
+                if (isMe) {
+                    myCurrentRole = role;
+                }
+
+                return `
+                        <li class="bg-slate-950 px-4 py-3 rounded-lg border ${isMe ? 'border-amber-500 shadow-amber-glow bg-amber-500/5' : 'border-slate-800'} flex justify-between items-center transition-all">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-user text-xs ${isMe ? 'text-amber-400' : 'text-slate-500'}"></i>
+                                <span class="${isMe ? 'font-bold text-amber-300' : 'text-slate-300'}">
+                                    ${p.nickname} <span class="text-xs text-slate-400">(${role})</span> ${isMe ? '<span class="text-xs text-amber-500 ml-1 font-mono">(YOU)</span>' : ''}
+                                </span>
+                            </div>
+                            <span class="text-xs font-mono text-slate-500">${p.status || 'READY'}</span>
+                        </li>
+                    `;
+            }).join('');
+
+            if (myCurrentRole === 'game_master') {
+                gmControls.classList.remove('hidden');
+            } else {
+                gmControls.classList.add('hidden');
+            }
+
+        } catch (err) {
+            console.error("Error fetching lobby players:", err);
+        }
+    }
+
+    // 3. Triggered when Game Master clicks "START GAME"
+    function startGame() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            // Send event to WebSocket manager to broadcast to all players in the room
+            ws.send(JSON.stringify({ type: "START_GAME" }));
+        }
+    }
+
+    // 4. Route players to their designated HTML page based on role
+    function redirectToGamePage() {
+        const queryParams = `?code=${encodeURIComponent(roomCode)}&player=${encodeURIComponent(currentUsername)}`;
+
+        if (myCurrentRole === 'game_master') {
+            window.location.href = `/game/gm${queryParams}`;
+        } else if (myCurrentRole === 'spectator') {
+            window.location.href = `/game/spectator${queryParams}`;
+        } else {
+            window.location.href = `/game/player${queryParams}`;
+        }
+    }
+
+    // Initialize fetching and socket connection
+    fetchLobbyPlayers();
+    //initWebSocket();
+    setInterval(fetchLobbyPlayers, 3000); // Poll list updates just in case players join/leave
+</script>
 </body>
 </html>

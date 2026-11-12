@@ -3,7 +3,10 @@ package com.ntnlbk.presentation
 import com.ntnlbk.di.dbModule
 import com.ntnlbk.di.playerModule
 import com.ntnlbk.di.roomModule
+import com.ntnlbk.domain.usecase.AddUserToRoomUseCase
 import com.ntnlbk.domain.usecase.CreateRoomUseCase
+import com.ntnlbk.domain.usecase.GetRoomUseCase
+import com.ntnlbk.presentation.dto.mapper.UserMapper
 import com.ntnlbk.presentation.plugins.configureSerialization
 import com.ntnlbk.presentation.routing.roomRouting
 import io.ktor.server.application.*
@@ -25,12 +28,15 @@ fun main() {
 }
 
 fun Application.configureRouting() {
+    val createRoomUseCase by inject<CreateRoomUseCase>()
+    val getRoomUseCase by inject<GetRoomUseCase>()
+    val mapper by inject<UserMapper>()
+    val addUserToRoomUseCase by inject<AddUserToRoomUseCase>()
     routing {
         staticResources("/", "static") {
             default("index.html")
             println("Hello World!")
         }
-        val createRoomUseCase by inject<CreateRoomUseCase>()
-        roomRouting(createRoomUseCase)
+        roomRouting(createRoomUseCase, getRoomUseCase, addUserToRoomUseCase, mapper)
     }
 }

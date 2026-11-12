@@ -1,4 +1,4 @@
-package com.ntnlbk.presentation.dtomodel
+package com.ntnlbk.presentation.dto.api
 
 import kotlinx.serialization.Serializable
 

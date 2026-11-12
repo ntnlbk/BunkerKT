@@ -6,6 +6,7 @@ import com.ntnlbk.domain.repository.RoomRepository
 import com.ntnlbk.domain.usecase.AddUserToRoomUseCase
 import com.ntnlbk.domain.usecase.CreateRoomUseCase
 import com.ntnlbk.domain.usecase.GetRoomUseCase
+import com.ntnlbk.presentation.dto.mapper.UserMapper
 import org.koin.dsl.module
 
 val roomModule = module {
@@ -17,4 +18,6 @@ val roomModule = module {
     single { AddUserToRoomUseCase(get()) }
 
     single { GetRoomUseCase(get()) }
+
+    factory { UserMapper() }
 }

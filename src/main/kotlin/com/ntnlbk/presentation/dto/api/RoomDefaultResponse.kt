@@ -1,8 +1,8 @@
-package com.ntnlbk.presentation.dtomodel
+package com.ntnlbk.presentation.dto.api
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RoomResponse(
+data class RoomDefaultResponse(
     val code: String,
 )
