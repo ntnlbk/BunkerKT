@@ -37,6 +37,9 @@ dependencies {
     // Serialization for REST API
     implementation("io.ktor:ktor-server-content-negotiation-jvm:2.3.8")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.8")
+
+    // WebSockets
+    implementation("io.ktor:ktor-server-websockets:2.3.8")
 }
 
 java {

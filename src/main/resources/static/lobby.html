@@ -51,29 +51,29 @@
     let ws;
     let myCurrentRole = 'player'; // Track the role of the logged-in user
 
-    // 1. Establish WebSocket Connection in the Waiting Room
-    // function initWebSocket() {
-    //     if (!roomCode || !currentUsername) return;
-    //
-    //     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    //     ws = new WebSocket(`${protocol}//${window.location.host}/ws/${roomCode}/${encodeURIComponent(currentUsername)}`);
-    //
-    //     ws.onmessage = (event) => {
-    //         const data = JSON.parse(event.data);
-    //
-    //         if (data.type === "GAME_STARTED") {
-    //             if (data.game_state) {
-    //                 sessionStorage.setItem('gameState', JSON.stringify(data.game_state));
-    //             }
-    //             redirectToGamePage();
-    //         }
-    //     };
-    //
-    //     ws.onclose = () => {
-    //         // Attempt reconnection after a short delay
-    //         setTimeout(initWebSocket, 2000);
-    //     };
-    // }
+
+    function initWebSocket() {
+        if (!roomCode || !currentUsername) return;
+
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${protocol}//${window.location.host}/ws/${roomCode}/${encodeURIComponent(currentUsername)}`);
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.type === "GAME_STARTED") {
+                // if (data.game_state) {
+                //     sessionStorage.setItem('gameState', JSON.stringify(data.game_state));
+                // }
+                // redirectToGamePage();
+                console.log("GAME STARTED")
+            }
+        };
+
+        ws.onclose = () => {
+            setTimeout(initWebSocket, 2000);
+        };
+    }
 
     async function fetchLobbyPlayers() {
         if (!roomCode) return;
@@ -118,15 +118,17 @@
         }
     }
 
-    // 3. Triggered when Game Master clicks "START GAME"
+
     function startGame() {
         if (ws && ws.readyState === WebSocket.OPEN) {
-            // Send event to WebSocket manager to broadcast to all players in the room
-            ws.send(JSON.stringify({ type: "START_GAME" }));
+            const message = {
+                type: "START_GAME",
+                roomCode: roomCode
+            };
+            ws.send(JSON.stringify(message));
         }
     }
 
-    // 4. Route players to their designated HTML page based on role
     function redirectToGamePage() {
         const queryParams = `?code=${encodeURIComponent(roomCode)}&player=${encodeURIComponent(currentUsername)}`;
 
@@ -141,7 +143,7 @@
 
     // Initialize fetching and socket connection
     fetchLobbyPlayers();
-    //initWebSocket();
+    initWebSocket();
     setInterval(fetchLobbyPlayers, 3000); // Poll list updates just in case players join/leave
 </script>
 </body>

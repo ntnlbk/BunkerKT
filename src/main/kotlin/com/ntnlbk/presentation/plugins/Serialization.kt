@@ -9,6 +9,7 @@ fun Application.configureSerialization() {
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
+            classDiscriminator = "type"
             isLenient = true
             ignoreUnknownKeys = true // Игнорировать лишние поля из JSON-запроса, которых нет в DTO
         })
