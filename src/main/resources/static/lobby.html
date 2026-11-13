@@ -29,7 +29,6 @@
         </ul>
     </div>
 
-    <!-- Start Game Button (Visible only to Game Master) -->
     <div id="gmControls" class="mt-4 hidden">
         <button onclick="startGame()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-lg tracking-wider font-mono text-base shadow-amber-glow transition-colors flex items-center justify-center space-x-2">
             <i class="fa-solid fa-play"></i>
@@ -49,24 +48,20 @@
     document.getElementById('displayRoomCode').innerText = roomCode || "UNKNOWN";
 
     let ws;
-    let myCurrentRole = 'player'; // Track the role of the logged-in user
+    let myCurrentRole = 'player';
 
 
     function initWebSocket() {
         if (!roomCode || !currentUsername) return;
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        ws = new WebSocket(`${protocol}//${window.location.host}/ws/${roomCode}/${encodeURIComponent(currentUsername)}`);
+        ws = new WebSocket(`${protocol}//${window.location.host}/ws/lobby/${roomCode}/${encodeURIComponent(currentUsername)}`);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
             if (data.type === "GAME_STARTED") {
-                // if (data.game_state) {
-                //     sessionStorage.setItem('gameState', JSON.stringify(data.game_state));
-                // }
-                // redirectToGamePage();
-                console.log("GAME STARTED")
+               redirectToGamePage();
             }
         };
 
@@ -122,29 +117,26 @@
     function startGame() {
         if (ws && ws.readyState === WebSocket.OPEN) {
             const message = {
-                type: "START_GAME",
-                roomCode: roomCode
+                type: "START_GAME"
             };
             ws.send(JSON.stringify(message));
         }
     }
 
     function redirectToGamePage() {
-        const queryParams = `?code=${encodeURIComponent(roomCode)}&player=${encodeURIComponent(currentUsername)}`;
 
         if (myCurrentRole === 'game_master') {
-            window.location.href = `/game/gm${queryParams}`;
+            window.location.href = `/lobby/${roomCode}/gm`;
         } else if (myCurrentRole === 'spectator') {
-            window.location.href = `/game/spectator${queryParams}`;
+            window.location.href = `/lobby/${roomCode}/spectator`;
         } else {
-            window.location.href = `/game/player${queryParams}`;
+            window.location.href = `/lobby/${roomCode}/player`;
         }
     }
 
-    // Initialize fetching and socket connection
     fetchLobbyPlayers();
     initWebSocket();
-    setInterval(fetchLobbyPlayers, 3000); // Poll list updates just in case players join/leave
+    setInterval(fetchLobbyPlayers, 3000);
 </script>
 </body>
 </html>

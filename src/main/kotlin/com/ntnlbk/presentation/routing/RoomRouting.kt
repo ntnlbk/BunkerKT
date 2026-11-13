@@ -10,7 +10,6 @@ import com.ntnlbk.presentation.dto.api.JoinRoomRequest
 import com.ntnlbk.presentation.dto.api.RoomDefaultResponse
 import com.ntnlbk.presentation.dto.api.RoomUsersResponse
 import com.ntnlbk.presentation.dto.mapper.UserMapper
-import com.ntnlbk.presentation.dto.model.GameStateDTO
 import com.ntnlbk.presentation.dto.websocket.ClientMessage
 import com.ntnlbk.presentation.dto.websocket.ServerMessage
 import com.ntnlbk.presentation.dto.websocket.WebSocketManager
@@ -59,6 +58,18 @@ fun Route.roomRouting(
         call.respondFile(java.io.File("src/main/resources/static/lobby.html"))
     }
 
+    get("/lobby/{code}/gm") {
+        call.respondFile(java.io.File("src/main/resources/static/gm.html"))
+    }
+
+    get("/lobby/{code}/spectator") {
+        call.respondFile(java.io.File("src/main/resources/static/spectator.html"))
+    }
+
+    get("/lobby/{code}/player") {
+        call.respondFile(java.io.File("src/main/resources/static/player.html"))
+    }
+
     get("/lobby/{code}/players") {
         val room = getRoomUseCase(
             call.parameters["code"] ?: return@get call.respond(
@@ -79,7 +90,7 @@ fun Route.roomRouting(
         call.respond(HttpStatusCode.OK, response)
     }
 
-    webSocket("/ws/{code}/{username}") {
+    webSocket("/ws/lobby/{code}/{username}") {
         val roomCode = call.parameters["code"] ?: throw IllegalArgumentException("Missing room code")
         val username = call.parameters["username"] ?: throw IllegalArgumentException("Missing username")
 
@@ -93,31 +104,20 @@ fun Route.roomRouting(
                     val clientMessage = try {
                         webSocketJson.decodeFromString<ClientMessage>(rawText)
                     } catch (e: Exception) {
-                        println("Невалидный JSON от клиента: ${e.localizedMessage}")
                         continue
                     }
 
                     when (clientMessage) {
                         is ClientMessage.StartGame -> {
-                            println("Игрок $username запросил старт для комнаты ${clientMessage.roomCode}")
-
-                            val newState = GameStateDTO(code = clientMessage.roomCode)
-
-                            val response: ServerMessage = ServerMessage.GameStarted(gameState = newState)
-
-//                            val jsonResponse = webSocketJson.encodeToString(response)
+                            val response: ServerMessage = ServerMessage.GameStarted
 
                             wsManager.broadcast(roomCode, response)
                         }
                     }
                 }
             }
-        } catch (e: Exception) {
-            println("Соединение с $username оборвалось: ${e.localizedMessage}")
         } finally {
             wsManager.removeSession(roomCode, this)
         }
     }
-
-
 }

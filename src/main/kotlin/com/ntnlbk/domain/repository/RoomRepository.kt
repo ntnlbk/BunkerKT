@@ -11,4 +11,6 @@ interface RoomRepository {
 
     fun addUserToRoom(code: String, user: User): Room
 
+    fun updateRoom(code: String, room: Room): Room
+
 }

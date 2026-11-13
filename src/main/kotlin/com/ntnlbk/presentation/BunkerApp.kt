@@ -11,6 +11,7 @@ import com.ntnlbk.plugins.configureWebSockets
 import com.ntnlbk.presentation.dto.mapper.UserMapper
 import com.ntnlbk.presentation.dto.websocket.WebSocketManager
 import com.ntnlbk.presentation.plugins.configureSerialization
+import com.ntnlbk.presentation.routing.gameGeneralRouting
 import com.ntnlbk.presentation.routing.roomRouting
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -43,5 +44,6 @@ fun Application.configureRouting() {
             println("Hello World!")
         }
         roomRouting(createRoomUseCase, getRoomUseCase, addUserToRoomUseCase, mapper, webSocketManager)
+        gameGeneralRouting()
     }
 }

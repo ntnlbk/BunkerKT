@@ -35,4 +35,13 @@ class RoomRepositoryImpl : RoomRepository {
         return room
     }
 
+    override fun updateRoom(code: String, room: Room): Room {
+        try {
+            rooms[code] = room
+            return room
+        } catch (e: Exception) {
+            throw NoSuchElementException("Error while updating the room: ${e.toString()}")
+        }
+    }
+
 }
