@@ -4,5 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GameStateDTO(
-    val code: String
+    val players: List<PlayerDTO>,
+    val catastropheDescription: String,
+    val bunkerDescription: String,
+    val bunkerInventory: String
 )

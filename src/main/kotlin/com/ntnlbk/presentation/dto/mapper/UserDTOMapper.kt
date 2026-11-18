@@ -5,7 +5,7 @@ import com.ntnlbk.domain.model.UserRole
 import com.ntnlbk.presentation.dto.model.UserDTO
 import com.ntnlbk.presentation.dto.model.UserRoleDTO
 
-class UserMapper {
+class UserDTOMapper {
     fun mapUserToUserDTO(user: User): UserDTO {
         return UserDTO(
             nickname = user.nickname,

@@ -5,11 +5,12 @@ import com.ntnlbk.domain.model.UserRole
 import com.ntnlbk.domain.usecase.AddUserToRoomUseCase
 import com.ntnlbk.domain.usecase.CreateRoomUseCase
 import com.ntnlbk.domain.usecase.GetRoomUseCase
+import com.ntnlbk.domain.usecase.StartGameUseCase
 import com.ntnlbk.presentation.dto.api.CreateRoomRequest
 import com.ntnlbk.presentation.dto.api.JoinRoomRequest
 import com.ntnlbk.presentation.dto.api.RoomDefaultResponse
 import com.ntnlbk.presentation.dto.api.RoomUsersResponse
-import com.ntnlbk.presentation.dto.mapper.UserMapper
+import com.ntnlbk.presentation.dto.mapper.UserDTOMapper
 import com.ntnlbk.presentation.dto.websocket.ClientMessage
 import com.ntnlbk.presentation.dto.websocket.ServerMessage
 import com.ntnlbk.presentation.dto.websocket.WebSocketManager
@@ -26,8 +27,9 @@ fun Route.roomRouting(
     createRoomUseCase: CreateRoomUseCase,
     getRoomUseCase: GetRoomUseCase,
     addUserToRoomUseCase: AddUserToRoomUseCase,
-    mapper: UserMapper,
-    wsManager: WebSocketManager
+    mapper: UserDTOMapper,
+    wsManager: WebSocketManager,
+    startGameUseCase: StartGameUseCase
 ) {
 
     val webSocketJson = Json {
@@ -46,8 +48,7 @@ fun Route.roomRouting(
         post("join") {
             val request = call.receive<JoinRoomRequest>()
             val room = addUserToRoomUseCase(
-                request.code,
-                mapper.mapUserDTOToUser(request.user)
+                request.code, mapper.mapUserDTOToUser(request.user)
             )
             val response = RoomDefaultResponse(room.code)
             call.respond(response)
@@ -55,26 +56,49 @@ fun Route.roomRouting(
     }
 
     get("/lobby/{code}") {
-        call.respondFile(java.io.File("src/main/resources/static/lobby.html"))
+        val resourceStream = application.environment.classLoader.getResourceAsStream("static/lobby.html")
+        if (resourceStream != null) {
+            val bytes = resourceStream.readBytes()
+            call.respondBytes(bytes, io.ktor.http.ContentType.Text.Html)
+        } else {
+            call.respond(io.ktor.http.HttpStatusCode.NotFound, "Lobby page not found")
+        }
     }
 
     get("/lobby/{code}/gm") {
-        call.respondFile(java.io.File("src/main/resources/static/gm.html"))
+        val resourceStream = application.environment.classLoader.getResourceAsStream("static/gm.html")
+        if (resourceStream != null) {
+            val bytes = resourceStream.readBytes()
+            call.respondBytes(bytes, io.ktor.http.ContentType.Text.Html)
+        } else {
+            call.respond(io.ktor.http.HttpStatusCode.NotFound, "Lobby page not found")
+        }
     }
 
     get("/lobby/{code}/spectator") {
-        call.respondFile(java.io.File("src/main/resources/static/spectator.html"))
+        val resourceStream = application.environment.classLoader.getResourceAsStream("static/spectator.html")
+        if (resourceStream != null) {
+            val bytes = resourceStream.readBytes()
+            call.respondBytes(bytes, io.ktor.http.ContentType.Text.Html)
+        } else {
+            call.respond(io.ktor.http.HttpStatusCode.NotFound, "Lobby page not found")
+        }
     }
 
     get("/lobby/{code}/player") {
-        call.respondFile(java.io.File("src/main/resources/static/player.html"))
+        val resourceStream = application.environment.classLoader.getResourceAsStream("static/player.html")
+        if (resourceStream != null) {
+            val bytes = resourceStream.readBytes()
+            call.respondBytes(bytes, io.ktor.http.ContentType.Text.Html)
+        } else {
+            call.respond(io.ktor.http.HttpStatusCode.NotFound, "Lobby page not found")
+        }
     }
 
     get("/lobby/{code}/players") {
         val room = getRoomUseCase(
             call.parameters["code"] ?: return@get call.respond(
-                HttpStatusCode.BadRequest,
-                "Missing room code"
+                HttpStatusCode.BadRequest, "Missing room code"
             )
         )
         if (room == null) {
@@ -85,14 +109,12 @@ fun Route.roomRouting(
         val response = RoomUsersResponse(
             room.users.map {
                 mapper.mapUserToUserDTO(it)
-            }
-        )
+            })
         call.respond(HttpStatusCode.OK, response)
     }
 
     webSocket("/ws/lobby/{code}/{username}") {
         val roomCode = call.parameters["code"] ?: throw IllegalArgumentException("Missing room code")
-        val username = call.parameters["username"] ?: throw IllegalArgumentException("Missing username")
 
         wsManager.addSession(roomCode, this)
 
@@ -109,9 +131,16 @@ fun Route.roomRouting(
 
                     when (clientMessage) {
                         is ClientMessage.StartGame -> {
+                            val room = getRoomUseCase(
+                                roomCode
+                            ) ?: throw IllegalArgumentException("Missing room with code $roomCode")
+                            startGameUseCase(room)
                             val response: ServerMessage = ServerMessage.GameStarted
-
                             wsManager.broadcast(roomCode, response)
+                        }
+
+                        else -> {
+                            // ignore
                         }
                     }
                 }

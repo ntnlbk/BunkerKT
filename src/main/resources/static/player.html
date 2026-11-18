@@ -6,350 +6,345 @@
     <title>BUNKER | Survivor Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap"
+          rel="stylesheet">
     <style>
-        body { font-family: 'Rajdhani', sans-serif; }
-        .font-mono { font-family: 'Share Tech Mono', monospace; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #0c0a09; }
-        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 2px; }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .font-mono {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0c0a09;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-200 overflow-x-hidden lg:overflow-hidden font-mono">
 
-    <header class="w-full px-3 py-2 flex flex-col sm:flex-row justify-between items-center border-b border-emerald-900/40 bg-slate-950 shrink-0 gap-2">
-        <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-user-shield text-emerald-500 text-lg animate-pulse"></i>
-            <span class="text-xs sm:text-sm font-bold tracking-widest text-emerald-400">BUNKER // DOSSIER</span>
+<header class="w-full px-3 py-2 flex flex-col sm:flex-row justify-between items-center border-b border-emerald-900/40 bg-slate-950 shrink-0 gap-2">
+    <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-user-shield text-emerald-500 text-lg animate-pulse"></i>
+        <span class="text-xs sm:text-sm font-bold tracking-widest text-emerald-400">BUNKER // DOSSIER</span>
+    </div>
+    <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+        <div class="text-[11px] sm:text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/30 truncate">
+            ROOM: <span id="headerRoomCode">---</span> | YOU: <span id="headerPlayerName">---</span>
         </div>
-        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
-            <div class="text-[11px] sm:text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/30 truncate">
-                ROOM: <span id="headerRoomCode">---</span> | YOU: <span id="headerPlayerName">---</span>
-            </div>
-            <div class="flex items-center space-x-1.5">
-                <button onclick="toggleSpecialCardsModal()" class="bg-amber-500/20 border border-amber-500 text-amber-400 px-2.5 py-1 rounded text-xs hover:bg-amber-500 hover:text-slate-950 transition-colors flex items-center space-x-1 shrink-0">
-                    <i class="fa-solid fa-star"></i><span>SPECIAL CARDS</span>
-                </button>
-                <button onclick="toggleChat()" class="bg-emerald-500/20 border border-emerald-500 text-emerald-400 px-2.5 py-1 rounded text-xs hover:bg-emerald-500 hover:text-slate-950 transition-colors flex items-center space-x-1 shrink-0">
-                    <i class="fa-solid fa-comments"></i><span>CHAT</span>
-                </button>
-            </div>
+        <div class="flex items-center space-x-1.5">
+            <button onclick="toggleSpecialCardsModal()"
+                    class="bg-amber-500/20 border border-amber-500 text-amber-400 px-2.5 py-1 rounded text-xs hover:bg-amber-500 hover:text-slate-950 transition-colors flex items-center space-x-1 shrink-0">
+                <i class="fa-solid fa-star"></i><span>SPECIAL CARDS</span>
+            </button>
         </div>
-    </header>
+    </div>
+</header>
 
-    <main class="flex-1 flex flex-col p-2 sm:p-3 overflow-y-auto lg:overflow-hidden space-y-2">
-        
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 shrink-0">
-            <div class="bg-slate-900 border border-slate-800 rounded p-2">
+<main class="flex-1 flex flex-col p-2 sm:p-3 overflow-y-auto lg:overflow-hidden space-y-2">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 shrink-0">
+        <div class="bg-slate-900 border border-slate-800 rounded p-2">
                 <span class="text-[10px] text-emerald-400 font-bold uppercase block border-b border-slate-800 pb-0.5 mb-1">
                     <i class="fa-solid fa-radiation mr-1"></i> Apocalypse
                 </span>
-                <p class="text-xs text-slate-300 leading-snug">Global pandemic of mutagenic virus. Atmosphere toxic.</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 rounded p-2">
+            <p class="text-xs text-slate-300 leading-snug">Global pandemic of mutagenic virus. Atmosphere toxic.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded p-2">
                 <span class="text-[10px] text-emerald-400 font-bold uppercase block border-b border-slate-800 pb-0.5 mb-1">
                     <i class="fa-solid fa-shield-halved mr-1"></i> Bunker
                 </span>
-                <p class="text-xs text-slate-300 leading-snug">Class A-4 shelter. Capacity: 6 survivors. Autonomy: 1 year.</p>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 rounded p-2">
+            <p class="text-xs text-slate-300 leading-snug">Class A-4 shelter. Capacity: 6 survivors. Autonomy: 1
+                year.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded p-2">
                 <span class="text-[10px] text-emerald-400 font-bold uppercase block border-b border-slate-800 pb-0.5 mb-1">
                     <i class="fa-solid fa-box-archive mr-1"></i> Inventory
                 </span>
-                <p class="text-xs text-slate-300 leading-snug">Generator, 6mo food reserves, medical kit, water filters.</p>
-            </div>
+            <p class="text-xs text-slate-300 leading-snug">Generator, 6mo food reserves, medical kit, water filters.</p>
         </div>
-        <div class="flex-1 flex flex-col min-h-0">
-            <div class="flex items-center justify-between mb-1.5 shrink-0 px-1">
-                <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wide"><i class="fa-solid fa-users mr-1"></i> Shelter Roster</h2>
-                <span class="text-[10px] text-slate-400">12 Slots</span>
-            </div>
-
-            <div id="playersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 pb-4 lg:pb-0 lg:flex-1 lg:overflow-y-auto">
-            </div>
+    </div>
+    <div class="flex-1 flex flex-col min-h-0">
+        <div class="flex items-center justify-between mb-1.5 shrink-0 px-1">
+            <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wide"><i
+                    class="fa-solid fa-users mr-1"></i> Shelter Roster</h2>
+            <span class="text-[10px] text-slate-400">12 Slots</span>
         </div>
 
-    </main>
-
-    <!-- Модальное окно для Special Cards -->
-    <div id="specialCardsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border-2 border-amber-500/60 rounded-xl w-full max-w-md p-4 shadow-[0_0_25px_rgba(245,158,11,0.2)] flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3 shrink-0">
-                <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wide flex items-center space-x-2">
-                    <i class="fa-solid fa-star text-amber-500"></i><span>Your Special Cards</span>
-                </h3>
-                <button onclick="toggleSpecialCardsModal()" class="text-slate-400 hover:text-amber-400 text-sm p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            
-            <div class="overflow-y-auto flex-1 space-y-3 pr-1 text-xs">
-                <div class="bg-slate-950 border border-amber-500/30 rounded p-3">
-                    <span class="text-[10px] text-amber-500 font-bold uppercase block mb-1">
-                        <i class="fa-solid fa-certificate mr-1"></i> Special Card #1
-                    </span>
-                    <p id="specialCard1Text" class="text-slate-200 leading-relaxed font-sans">Loading card...</p>
-                </div>
-                <div class="bg-slate-950 border border-amber-500/30 rounded p-3">
-                    <span class="text-[10px] text-amber-500 font-bold uppercase block mb-1">
-                        <i class="fa-solid fa-certificate mr-1"></i> Special Card #2
-                    </span>
-                    <p id="specialCard2Text" class="text-slate-200 leading-relaxed font-sans">Loading card...</p>
-                </div>
-            </div>
-
-            <div class="mt-4 pt-2 border-t border-slate-800 text-center shrink-0">
-                <button onclick="toggleSpecialCardsModal()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors">
-                    CLOSE
-                </button>
-            </div>
+        <div id="playersGrid"
+             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 pb-4 lg:pb-0 lg:flex-1 lg:overflow-y-auto">
         </div>
     </div>
 
-    <!-- Slide-out Chat Drawer -->
-    <div id="chatDrawer" class="fixed inset-y-0 right-0 w-full sm:w-80 bg-slate-900 border-l border-emerald-500/40 shadow-2xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col p-3">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-            <h3 class="text-xs text-emerald-400 uppercase font-bold tracking-wider">
-                <i class="fa-solid fa-comments mr-1.5"></i> Shelter Chat
+</main>
+
+<div id="specialCardsModal"
+     class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border-2 border-amber-500/60 rounded-xl w-full max-w-md p-4 shadow-[0_0_25px_rgba(245,158,11,0.2)] flex flex-col max-h-[90vh]">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3 shrink-0">
+            <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wide flex items-center space-x-2">
+                <i class="fa-solid fa-star text-amber-500"></i><span>Your Special Cards</span>
             </h3>
-            <button onclick="toggleChat()" class="text-slate-400 hover:text-emerald-400 text-sm p-2">
+            <button onclick="toggleSpecialCardsModal()" class="text-slate-400 hover:text-amber-400 text-sm p-1">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
-        <div id="chatBox" class="flex-1 overflow-y-auto text-xs space-y-1.5 p-2 bg-slate-950 rounded border border-slate-800 mb-2"></div>
-        <form onsubmit="sendChatMessage(event)" class="flex gap-2">
-            <input type="text" id="chatInput" placeholder="Plead your case..." required class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
-            <button type="submit" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3 py-2 rounded text-xs font-bold transition-colors">SEND</button>
-        </form>
+
+        <div class="overflow-y-auto flex-1 space-y-3 pr-1 text-xs">
+            <div class="bg-slate-950 border border-amber-500/30 rounded p-3">
+                    <span class="text-[10px] text-amber-500 font-bold uppercase block mb-1">
+                        <i class="fa-solid fa-certificate mr-1"></i> Special Card #1
+                    </span>
+                <p id="specialCard1Text" class="text-slate-200 leading-relaxed font-sans">Loading card...</p>
+            </div>
+            <div class="bg-slate-950 border border-amber-500/30 rounded p-3">
+                    <span class="text-[10px] text-amber-500 font-bold uppercase block mb-1">
+                        <i class="fa-solid fa-certificate mr-1"></i> Special Card #2
+                    </span>
+                <p id="specialCard2Text" class="text-slate-200 leading-relaxed font-sans">Loading card...</p>
+            </div>
+        </div>
+
+        <div class="mt-4 pt-2 border-t border-slate-800 text-center shrink-0">
+            <button onclick="toggleSpecialCardsModal()"
+                    class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors">
+                CLOSE
+            </button>
+        </div>
     </div>
+</div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const roomCode = params.get('code') || sessionStorage.getItem('roomCode') || 'BNK-0000';
-        const currentUsername = params.get('player') || sessionStorage.getItem('playerName') || 'Survivor';
-        
-        document.getElementById('headerRoomCode').innerText = roomCode;
-        document.getElementById('headerPlayerName').innerText = currentUsername;
+<script>
+    const roomCode = sessionStorage.getItem('roomCode');
+    const currentUsername = sessionStorage.getItem('playerName');
 
-        let gameState = null;
+    document.getElementById('headerRoomCode').innerText = roomCode;
+    document.getElementById('headerPlayerName').innerText = currentUsername;
 
-        const savedState = sessionStorage.getItem('gameState');
-        if (savedState) {
-            try {
-                gameState = JSON.parse(savedState);
-                renderGameState(gameState);
-            } catch (e) {
-                console.error("Error parsing saved game state:", e);
-            }
-        }
+    let gameState = null;
 
-        function toggleChat() {
-            const drawer = document.getElementById('chatDrawer');
-            drawer.classList.toggle('translate-x-full');
-        }
-
-        function toggleSpecialCardsModal() {
-            const modal = document.getElementById('specialCardsModal');
-            modal.classList.toggle('hidden');
-            if (!modal.classList.contains('hidden')) {
-                updateSpecialCardsContent();
-            }
-        }
-
-        function updateSpecialCardsContent() {
-            if (!gameState || !gameState.players) return;
-            const me = gameState.players.find(p => p.nickname === currentUsername);
-            if (me && me.traits) {
-                const card1 = me.traits.special_card_1 ? me.traits.special_card_1.value : "No card available";
-                const card2 = me.traits.special_card_2 ? me.traits.special_card_2.value : "No card available";
-                document.getElementById('specialCard1Text').innerText = card1;
-                document.getElementById('specialCard2Text').innerText = card2;
-            } else {
-                document.getElementById('specialCard1Text').innerText = "Card data unavailable";
-                document.getElementById('specialCard2Text').innerText = "Card data unavailable";
-            }
-        }
-
-        function renderGameState(state) {
-            if (!state) return;
-
-            if (state.catastrophe_description) {
-                document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-3 > div:nth-child(1) p').innerText = state.catastrophe_description;
-            }
-            if (state.bunker_description) {
-                document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-3 > div:nth-child(2) p').innerText = state.bunker_description;
-            }
-            if (state.bunker_inventory) {
-                document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-3 > div:nth-child(3) p').innerText = state.bunker_inventory;
-            }
-
+    function toggleSpecialCardsModal() {
+        const modal = document.getElementById('specialCardsModal');
+        modal.classList.toggle('hidden');
+        if (!modal.classList.contains('hidden')) {
             updateSpecialCardsContent();
+        }
+    }
 
-            const grid = document.getElementById('playersGrid');
-            grid.innerHTML = '';
+    function updateSpecialCardsContent() {
+        if (!gameState || !gameState.players) return;
 
-            const players = state.players || [];
+        const me = gameState.players.find(p => p.nickname === currentUsername);
 
-            for (let i = 0; i < 12; i++) {
-                const slotNumber = i + 1; // Порядковый номер карточки (1-12)
-                const player = players[i] || null;
-                const isOccupied = !!player;
-                const nickname = player ? player.nickname : `SLOT #${slotNumber}`;
-                const isMe = player && player.nickname === currentUsername;
-                const isAlive = player ? player.is_alive : true;
+        if (me && me.specialCards) {
+            const card1 = me.specialCards[0] ? me.specialCards[0] : "No card available";
+            const card2 = me.specialCards[1] ? me.specialCards[1] : "No card available";
 
-                const renderTraitItem = (traitObj, fallbackName) => {
-                    if (!isOccupied || !traitObj) {
-                        return `<div class="text-slate-600 italic text-xs py-1 truncate">${fallbackName}</div>`;
-                    }
+            const el1 = document.getElementById('specialCard1Text');
+            const el2 = document.getElementById('specialCard2Text');
 
-                    if (!isMe && !traitObj.is_open) {
-                        return `<div class="text-slate-600 italic text-xs py-1 truncate">???</div>`;
-                    }
+            if (el1) el1.innerText = card1;
+            if (el2) el2.innerText = card2;
+        } else {
+            const el1 = document.getElementById('specialCard1Text');
+            const el2 = document.getElementById('specialCard2Text');
 
-                    if (isMe) {
-                        const isOpenToAll = traitObj.is_open;
-                        const statusBadge = isOpenToAll 
-                            ? `<span class="text-[9px] text-emerald-400 font-normal shrink-0 ml-1" title="Видно всем"><i class="fa-solid fa-eye"></i></span>`
-                            : `<span class="text-[9px] text-amber-500 font-normal shrink-0 ml-1" title="Видно только вам"><i class="fa-solid fa-lock"></i></span>`;
-                        
-                        return `
-                            <div class="flex items-start justify-between text-white text-xs py-1" title="${traitObj.value}">
-                                <span class="break-words leading-tight">${traitObj.value}</span>
-                                ${statusBadge}
-                            </div>
-                        `;
-                    }
+            if (el1) el1.innerText = "Card data unavailable";
+            if (el2) el2.innerText = "Card data unavailable";
+        }
+    }
 
-                    return `<div class="text-white font-medium text-xs py-1 break-words leading-tight" title="${traitObj.value}">${traitObj.value}</div>`;
-                };
+    function renderGameState(state) {
+        if (!state) return;
 
-                const traits = player ? player.traits : {};
+        if (state.catastropheDescription) {
+            document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-3 > div:nth-child(1) p').innerText = state.catastropheDescription;
+        }
+        if (state.bunkerDescription) {
+            document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-3 > div:nth-child(2) p').innerText = state.bunkerDescription;
+        }
+        if (state.bunkerInventory) {
+            document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-3 > div:nth-child(3) p').innerText = state.bunkerInventory;
+        }
 
-                const getHeaderTraitValue = (traitObj, fallback) => {
-                    if (!isOccupied || !traitObj) return fallback;
-                    if (!isMe && !traitObj.is_open) return `???`;
-                    return traitObj.value;
-                };
+        if (typeof updateSpecialCardsContent === 'function') {
+            updateSpecialCardsContent();
+        }
 
-                const sexVal = getHeaderTraitValue(traits.sex, 'Gender');
-                const ageVal = getHeaderTraitValue(traits.age, 'Age');
+        const grid = document.getElementById('playersGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
 
-                const card = document.createElement('div');
-                // Добавляем стилизацию и класс relative для позиционирования штампа EXILED
-                card.className = `relative overflow-hidden bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
-                    isOccupied 
-                        ? (isAlive 
-                            ? (isMe ? 'border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-emerald-500/70') 
-                            : 'border-rose-900/60 opacity-60 bg-rose-950/20') 
-                        : 'border-slate-800/80 opacity-40'
-                }`;
+        const players = state.players || [];
 
-                // Блок штампа EXILED, если игрок мертв/изгнан
-                const exiledStampHtml = (!isAlive && isOccupied) ? `
-                    <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                        <div class="border-4 border-rose-500/80 text-rose-500 font-black text-xl sm:text-2xl px-3 py-1 uppercase tracking-widest rotate-[-12deg] shadow-[0_0_15px_rgba(244,63,94,0.3)] bg-slate-950/80 backdrop-blur-[1px]">
-                            EXILED
-                        </div>
-                    </div>
-                ` : '';
+        for (let i = 0; i < 12; i++) {
+            const slotNumber = i + 1; // Порядковый номер карточки (1-12)
+            const player = players[i] || null;
+            const isOccupied = !!player;
+            const nickname = player ? player.nickname : `SLOT #${slotNumber}`;
+            const isMe = player && player.nickname === currentUsername;
+            const isAlive = player ? player.isAlive : true;
 
-                card.innerHTML = `
-                    ${exiledStampHtml}
-                    <div class="border-b border-slate-800 pb-1.5 mb-1.5 shrink-0">
-                        <div class="flex items-center justify-between gap-1">
-                            <div class="flex items-center space-x-1.5 min-w-0">
-                                <span class="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded border shrink-0 ${
-                                    isMe 
-                                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/40' 
-                                        : (isOccupied ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-slate-800 text-slate-500 border-slate-700')
-                                }">
-                                    ${slotNumber}
-                                </span>
-                                <span class="text-xs sm:text-sm font-bold ${isOccupied ? (isAlive ? (isMe ? 'text-amber-400' : 'text-white') : 'text-rose-400 line-through') : 'text-slate-600'} truncate">
-                                    ${nickname} ${isMe ? '(YOU)' : ''}
-                                </span>
-                            </div>
-                            <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold shrink-0 ${
-                                isOccupied 
-                                    ? (isAlive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30') 
-                                    : 'text-slate-600'
-                            }">
-                                ${isOccupied ? (isAlive ? 'Alive' : 'Dead') : 'Empty'}
-                            </span>
-                        </div>
-                        ${isOccupied ? `
-                        <div class="flex items-center space-x-2 mt-1 text-[11px] text-slate-300 font-mono">
-                            <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-venus-mars mr-1 text-emerald-500"></i>${sexVal}</span>
-                            <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-cake-candles mr-1 text-emerald-500"></i>${ageVal} yrs</span>
-                        </div>` : ''}
-                    </div>
+            const renderTraitItem = (traitObj, fallbackName) => {
+                if (!isOccupied || !traitObj) {
+                    return `<div class="text-slate-600 italic text-xs py-1 truncate">${fallbackName}</div>`;
+                }
 
-                    <!-- Две колонки на всю ширину карточки -->
-                    <div class="grid grid-cols-2 gap-2 text-xs flex-1">
-                        <!-- Left Column (4 items: Profession, Health, Hobby, Phobia) -->
-                        <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
-                            ${renderTraitItem(traits.profession, 'Profession')}
-                            ${renderTraitItem(traits.health, 'Health')}
-                            ${renderTraitItem(traits.hobby, 'Hobby')}
-                            ${renderTraitItem(traits.phobia, 'Phobia')}
-                        </div>
+                if (!isMe && !traitObj.isOpen) {
+                    return `<div class="text-slate-600 italic text-xs py-1 truncate">???</div>`;
+                }
 
-                        <!-- Right Column (3 items: Baggage, Fact 1, Fact 2) -->
-                        <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
-                            ${renderTraitItem(traits.baggage, 'Baggage')}
-                            ${renderTraitItem(traits.fact_1, 'Fact 1')}
-                            ${renderTraitItem(traits.fact_2, 'Fact 2')}
-                        </div>
+                if (isMe) {
+                    const isOpenToAll = traitObj.isOpen;
+                    const statusBadge = isOpenToAll
+                        ? `<span class="text-[9px] text-emerald-400 font-normal shrink-0 ml-1" title="Видно всем"><i class="fa-solid fa-eye"></i></span>`
+                        : `<span class="text-[9px] text-amber-500 font-normal shrink-0 ml-1" title="Видно только вам"><i class="fa-solid fa-lock"></i></span>`;
+
+                    return `
+                    <div class="flex items-start justify-between text-white text-xs py-1" title="${traitObj.value}">
+                        <span class="break-words leading-tight">${traitObj.value}</span>
+                        ${statusBadge}
                     </div>
                 `;
-                grid.appendChild(card);
-            }
-        }
-
-        let ws;
-        function initWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}/ws/${roomCode}/${encodeURIComponent(currentUsername)}`);
-
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                
-                if (data.type === "CHAT") {
-                    appendChatMessage(data.sender, data.message);
-                } 
-                else if (data.type === "GAME_STARTED" || data.type === "GAME_STATE_UPDATE") {
-                    if (data.game_state) {
-                        gameState = data.game_state;
-                        sessionStorage.setItem('gameState', JSON.stringify(gameState));
-                        renderGameState(gameState);
-                    }
                 }
+
+                return `<div class="text-white font-medium text-xs py-1 break-words leading-tight" title="${traitObj.value}">${traitObj.value}</div>`;
             };
-            ws.onclose = () => setTimeout(initWebSocket, 2000);
+
+            const getHeaderTraitValue = (traitObj, fallback) => {
+                if (!isOccupied || !traitObj) return fallback;
+                if (!isMe && !traitObj.isOpen) return `???`;
+                return traitObj.value;
+            };
+
+            const sexVal = getHeaderTraitValue(player ? player.sex : null, 'Gender');
+            const ageVal = getHeaderTraitValue(player ? player.age : null, 'Age');
+
+            const card = document.createElement('div');
+            card.className = `relative overflow-hidden bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
+                isOccupied
+                    ? (isAlive
+                        ? (isMe ? 'border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-emerald-500/70')
+                        : 'border-rose-900/60 opacity-60 bg-rose-950/20')
+                    : 'border-slate-800/80 opacity-40'
+            }`;
+
+            const exiledStampHtml = (!isAlive && isOccupied) ? `
+            <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <div class="border-4 border-rose-500/80 text-rose-500 font-black text-xl sm:text-2xl px-3 py-1 uppercase tracking-widest rotate-[-12deg] shadow-[0_0_15px_rgba(244,63,94,0.3)] bg-slate-950/80 backdrop-blur-[1px]">
+                    EXILED
+                </div>
+            </div>
+        ` : '';
+
+            const traits = player ? player : {};
+
+            card.innerHTML = `
+            ${exiledStampHtml}
+            <div class="border-b border-slate-800 pb-1.5 mb-1.5 shrink-0">
+                <div class="flex items-center justify-between gap-1">
+                    <div class="flex items-center space-x-1.5 min-w-0">
+                        <span class="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded border shrink-0 ${
+                isMe
+                    ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                    : (isOccupied ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-slate-800 text-slate-500 border-slate-700')
+            }">
+                            ${slotNumber}
+                        </span>
+                        <span class="text-xs sm:text-sm font-bold ${isOccupied ? (isAlive ? (isMe ? 'text-amber-400' : 'text-white') : 'text-rose-400 line-through') : 'text-slate-600'} truncate">
+                            ${nickname} ${isMe ? '(YOU)' : ''}
+                        </span>
+                    </div>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold shrink-0 ${
+                isOccupied
+                    ? (isAlive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30')
+                    : 'text-slate-600'
+            }">
+                        ${isOccupied ? (isAlive ? 'Alive' : 'Dead') : 'Empty'}
+                    </span>
+                </div>
+                ${isOccupied ? `
+                <div class="flex items-center space-x-2 mt-1 text-[11px] text-slate-300 font-mono">
+                    <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-venus-mars mr-1 text-emerald-500"></i>${sexVal}</span>
+                    <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-cake-candles mr-1 text-emerald-500"></i>${ageVal} yrs</span>
+                </div>` : ''}
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs flex-1">
+                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
+                    ${renderTraitItem(traits.profession, 'Profession')}
+                    ${renderTraitItem(traits.health, 'Health')}
+                    ${renderTraitItem(traits.hobby, 'Hobby')}
+                    ${renderTraitItem(traits.phobia, 'Phobia')}
+                </div>
+
+                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
+                    ${renderTraitItem(traits.baggage, 'Baggage')}
+                    ${renderTraitItem(traits.factOne, 'Fact 1')}
+                    ${renderTraitItem(traits.factTwo, 'Fact 2')}
+                </div>
+            </div>
+        `;
+            grid.appendChild(card);
         }
+    }
 
-        (function startWebSocketConnection() {
-            initWebSocket();
-        })();
+    let ws;
 
-        function sendChatMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('chatInput');
-            if (ws && input.value.trim()) {
-                ws.send(JSON.stringify({ type: "CHAT", message: input.value.trim() }));
-                input.value = "";
+    function initWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${protocol}//${window.location.host}/ws/game/${roomCode}/${encodeURIComponent(currentUsername)}`);
+
+        ws.onopen = () => {
+            console.log("WebSocket соединение открыто, отправляем готовность...");
+
+            const readyRequest = {
+                type: "READY_FOR_GAME_START"
+            };
+
+            ws.send(JSON.stringify(readyRequest));
+        };
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === "GAME_STATE") {
+                console.log(`recieved game state`);
+                if (data.gameState) {
+                    gameState = data.gameState;
+                    console.log(`${gameState.bunkerDescription}`);
+                    sessionStorage.setItem('gameState', JSON.stringify(gameState));
+                    renderGameState(gameState);
+                }
             }
-        }
+        };
 
-        function appendChatMessage(sender, message) {
-            const chatBox = document.getElementById('chatBox');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = "p-0.5 rounded text-slate-300";
-            msgDiv.innerHTML = `<span class="font-bold text-emerald-400">${sender}:</span> ${message}`;
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+        ws.onclose = () => setTimeout(initWebSocket, 2000);
+    }
+
+    (function startWebSocketConnection() {
+        initWebSocket();
+    })();
+
+    function sendChatMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById('chatInput');
+        if (ws && input.value.trim()) {
+            ws.send(JSON.stringify({type: "CHAT", message: input.value.trim()}));
+            input.value = "";
         }
-    </script>
+    }
+
+</script>
 </body>
 </html>

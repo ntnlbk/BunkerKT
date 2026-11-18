@@ -8,7 +8,7 @@ RUN ./gradlew dependencies --no-daemon
 
 COPY src ./src
 
-RUN ./gradlew shadowJar --no-daemon || ./gradlew installDist --no-daemon
+RUN ./gradlew installDist --no-daemon
 
 FROM eclipse-temurin:26-jre
 WORKDIR /app

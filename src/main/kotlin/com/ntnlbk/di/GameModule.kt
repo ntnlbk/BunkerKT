@@ -11,6 +11,4 @@ val gameModule = module {
     single<GameRepository> { GameRepositoryImpl(get(), get()) }
 
     single { StartGameUseCase(get()) }
-
-
 }
