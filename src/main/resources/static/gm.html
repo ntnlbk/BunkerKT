@@ -26,9 +26,6 @@
             <div class="text-[11px] sm:text-xs text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/30 truncate">
                 ROOM: <span id="headerRoomCode">---</span> | ROLE: GAME MASTER
             </div>
-            <button onclick="toggleChat()" class="bg-amber-500/20 border border-amber-500 text-amber-400 px-2.5 py-1 rounded text-xs hover:bg-amber-500 hover:text-slate-950 transition-colors flex items-center space-x-1 shrink-0">
-                <i class="fa-solid fa-comments"></i><span>CHAT</span>
-            </button>
         </div>
     </header>
 
@@ -56,7 +53,6 @@
                 </div>
             </div>
 
-            <!-- Trait Reveal Tool -->
             <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
                 <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-eye mr-1"></i> Reveal Player Trait</h3>
                 <div class="space-y-1.5">
@@ -81,7 +77,6 @@
                 </div>
             </div>
 
-            <!-- Player Life Status Tool (NEW) -->
             <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
                 <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-skull mr-1"></i> Survivor Status (Life/Death)</h3>
                 <div class="space-y-1.5">
@@ -129,227 +124,156 @@
 
     </main>
 
-    <div id="chatDrawer" class="fixed inset-y-0 right-0 w-full sm:w-80 bg-slate-900 border-l border-amber-500/40 shadow-2xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col p-3">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-            <h3 class="text-xs text-amber-400 uppercase font-bold tracking-wider">
-                <i class="fa-solid fa-comments mr-1.5"></i> Overseer Comm Channel
-            </h3>
-            <button onclick="toggleChat()" class="text-slate-400 hover:text-amber-400 text-sm p-2">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-        </div>
-        <div id="chatBox" class="flex-1 overflow-y-auto text-xs space-y-1.5 p-2 bg-slate-950 rounded border border-slate-800 mb-2 font-mono"></div>
-        <form onsubmit="sendChatMessage(event)" class="flex gap-2">
-            <input type="text" id="chatInput" placeholder="Broadcast directive..." required class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 font-mono">
-            <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-2 rounded text-xs font-bold transition-colors">SEND</button>
-        </form>
-    </div>
-
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const roomCode = params.get('code') || sessionStorage.getItem('roomCode') || 'BNK-0000';
-        const currentUsername = params.get('player') || sessionStorage.getItem('playerName') || 'GameMaster';
+        const roomCode = sessionStorage.getItem('roomCode');
+        const currentUsername = "GM"
         
         document.getElementById('headerRoomCode').innerText = roomCode;
-
-        let gameState = null;
-
-        const savedState = sessionStorage.getItem('gameState');
-        if (savedState) {
-            try {
-                gameState = JSON.parse(savedState);
-                renderGmState(gameState);
-            } catch (e) {
-                console.error("Error parsing saved game state:", e);
-            }
-        }
-
-        function toggleChat() {
-            const drawer = document.getElementById('chatDrawer');
-            drawer.classList.toggle('translate-x-full');
-        }
 
         function renderGmState(state) {
             if (!state) return;
 
-            if (state.catastrophe_description) {
-                document.getElementById('catastropheDesc').innerText = state.catastrophe_description;
+            if (state.catastropheDescription) {
+                const el = document.getElementById('catastropheDesc');
+                if (el) el.innerText = state.catastropheDescription;
             }
-            if (state.bunker_description) {
-                document.getElementById('bunkerDesc').innerText = state.bunker_description;
+            if (state.bunkerDescription) {
+                const el = document.getElementById('bunkerDesc');
+                if (el) el.innerText = state.bunkerDescription;
             }
-            if (state.bunker_inventory) {
-                document.getElementById('bunkerInv').innerText = "Inventory: " + state.bunker_inventory;
+            if (state.bunkerInventory) {
+                const el = document.getElementById('bunkerInv');
+                if (el) el.innerText = "Inventory: " + state.bunkerInventory;
             }
 
             const selectPlayer = document.getElementById('selectPlayer');
             const selectStatusPlayer = document.getElementById('selectStatusPlayer');
-            
-            selectPlayer.innerHTML = '<option value="">Select Survivor...</option>';
-            selectStatusPlayer.innerHTML = '<option value="">Select Survivor...</option>';
-            
+
+            if (selectPlayer) selectPlayer.innerHTML = '<option value="">Select Survivor...</option>';
+            if (selectStatusPlayer) selectStatusPlayer.innerHTML = '<option value="">Select Survivor...</option>';
+
             const players = state.players || [];
             players.forEach(p => {
-                const opt1 = document.createElement('option');
-                opt1.value = p.nickname;
-                opt1.innerText = p.nickname;
-                selectPlayer.appendChild(opt1);
+                if (selectPlayer) {
+                    const opt1 = document.createElement('option');
+                    opt1.value = p.nickname;
+                    opt1.innerText = p.nickname;
+                    selectPlayer.appendChild(opt1);
+                }
 
-                const opt2 = document.createElement('option');
-                opt2.value = p.nickname;
-                opt2.innerText = `${p.nickname} (${p.is_alive ? 'Alive' : 'Dead'})`;
-                selectStatusPlayer.appendChild(opt2);
+                if (selectStatusPlayer) {
+                    const opt2 = document.createElement('option');
+                    opt2.value = p.nickname;
+                    opt2.innerText = `${p.nickname} (${p.isAlive ? 'Alive' : 'Dead'})`;
+                    selectStatusPlayer.appendChild(opt2);
+                }
             });
 
             const grid = document.getElementById('playersGrid');
+            if (!grid) return;
             grid.innerHTML = '';
 
             for (let i = 0; i < 12; i++) {
+                const slotNumber = i + 1;
                 const player = players[i] || null;
                 const isOccupied = !!player;
-                const nickname = player ? player.nickname : `SLOT #${i + 1}`;
-                const isAlive = player ? player.is_alive : true;
+                const nickname = player ? player.nickname : `SLOT #${slotNumber}`;
+                const isAlive = player ? player.isAlive : true;
 
                 const renderGmTraitItem = (traitObj, fallbackName) => {
                     if (!isOccupied || !traitObj) {
                         return `<div class="text-slate-600 italic text-xs py-1 truncate">${fallbackName}</div>`;
                     }
 
-                    const isOpenToAll = traitObj.is_open;
-                    const statusBadge = isOpenToAll 
+                    const isOpenToAll = traitObj.isOpen;
+                    const statusBadge = isOpenToAll
                         ? `<span class="text-[9px] text-emerald-400 font-normal shrink-0 ml-1" title="Открыта всем"><i class="fa-solid fa-eye"></i></span>`
                         : `<span class="text-[9px] text-amber-500 font-normal shrink-0 ml-1" title="Закрыта (видна только ГМу и игроку)"><i class="fa-solid fa-lock"></i></span>`;
-                    
-                    return `
-                        <div class="flex items-start justify-between text-white text-xs py-1" title="${traitObj.value}">
-                            <span class="break-words leading-tight ${isOpenToAll ? 'text-emerald-200' : 'text-slate-300'}">${traitObj.value}</span>
-                            ${statusBadge}
-                        </div>
-                    `;
-                };
 
-                const traits = player ? player.traits : {};
+                    return `
+                <div class="flex items-start justify-between text-white text-xs py-1" title="${traitObj.value}">
+                    <span class="break-words leading-tight ${isOpenToAll ? 'text-emerald-200' : 'text-slate-300'}">${traitObj.value}</span>
+                    ${statusBadge}
+                </div>
+            `;
+                };
 
                 const card = document.createElement('div');
                 card.className = `bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
-                    isOccupied 
-                        ? (isAlive ? 'border-amber-500/70 shadow-[0_0_10px_rgba(245,158,11,0.1)]' : 'border-rose-900/60 opacity-65') 
+                    isOccupied
+                        ? (isAlive ? 'border-amber-500/70 shadow-[0_0_10px_rgba(245,158,11,0.1)]' : 'border-rose-900/60 opacity-65')
                         : 'border-slate-800/80 opacity-40'
                 }`;
 
+                const sex = player ? player.sex : null;
+                const age = player ? player.age : null;
+                const profession = player ? player.profession : null;
+                const health = player ? player.health : null;
+                const hobby = player ? player.hobby : null;
+                const phobia = player ? player.phobia : null;
+                const baggage = player ? player.baggage : null;
+                const fact1 = player ? player.factOne : null;
+                const fact2 = player ? player.factTwo : null;
+
                 card.innerHTML = `
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5 shrink-0">
-                        <span class="text-xs sm:text-sm font-bold ${isOccupied ? (isAlive ? 'text-amber-400' : 'text-rose-400 line-through') : 'text-slate-600'} truncate">
-                            ${nickname}
-                        </span>
-                        <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold ${
-                            isOccupied 
-                                ? (isAlive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30') 
-                                : 'text-slate-600'
-                        }">
-                            ${isOccupied ? (isAlive ? 'Alive' : 'Dead / Exiled') : 'Empty'}
-                        </span>
-                    </div>
+            <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5 shrink-0">
+                <span class="text-xs sm:text-sm font-bold ${isOccupied ? (isAlive ? 'text-amber-400' : 'text-rose-400 line-through') : 'text-slate-600'} truncate">
+                    ${slotNumber}. ${nickname}
+                </span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold ${
+                    isOccupied
+                        ? (isAlive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30')
+                        : 'text-slate-600'
+                }">
+                    ${isOccupied ? (isAlive ? 'Alive' : 'Dead / Exiled') : 'Empty'}
+                </span>
+            </div>
 
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <!-- Left Column -->
-                        <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
-                            ${renderGmTraitItem(traits.profession, 'Profession')}
-                            ${renderGmTraitItem(traits.health, 'Health')}
-                            ${renderGmTraitItem(traits.hobby, 'Hobby')}
-                            ${renderGmTraitItem(traits.phobia, 'Phobia')}
-                        </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
+                    ${renderGmTraitItem(profession, 'Profession')}
+                    ${renderGmTraitItem(health, 'Health')}
+                    ${renderGmTraitItem(hobby, 'Hobby')}
+                    ${renderGmTraitItem(phobia, 'Phobia')}
+                </div>
 
-                        <!-- Right Column -->
-                        <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
-                            ${renderGmTraitItem(traits.sex, 'Gender')}
-                            ${renderGmTraitItem(traits.age, 'Age')}
-                            ${renderGmTraitItem(traits.baggage, 'Baggage')}
-                            ${renderGmTraitItem(traits.fact_1, 'Fact 1')}
-                            ${renderGmTraitItem(traits.fact_2, 'Fact 2')}
-                        </div>
-                    </div>
-                `;
+                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
+                    ${renderGmTraitItem(sex, 'Gender')}
+                    ${renderGmTraitItem(age, 'Age')}
+                    ${renderGmTraitItem(baggage, 'Baggage')}
+                    ${renderGmTraitItem(fact1, 'Fact 1')}
+                    ${renderGmTraitItem(fact2, 'Fact 2')}
+                </div>
+            </div>
+        `;
                 grid.appendChild(card);
-            }
-        }
-
-        function mockRevealTrait() {
-            const playerNick = document.getElementById('selectPlayer').value;
-            const traitKey = document.getElementById('selectTrait').value;
-
-            if (!playerNick || !traitKey) {
-                alert("Please select both a survivor and a trait!");
-                return;
-            }
-
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    type: "REVEAL_TRAIT",
-                    target_nickname: playerNick,
-                    trait_key: traitKey
-                }));
-            } else {
-                alert("WebSocket connection is not active!");
-            }
-        }
-
-        function setPlayerStatus(isAliveStatus) {
-            const playerNick = document.getElementById('selectStatusPlayer').value;
-
-            if (!playerNick) {
-                alert("Please select a survivor first!");
-                return;
-            }
-
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
-                    type: "SET_PLAYER_STATUS",
-                    target_nickname: playerNick,
-                    is_alive: isAliveStatus
-                }));
-            } else {
-                alert("WebSocket connection is not active!");
             }
         }
 
         let ws;
         function initWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}/ws/${roomCode}/${encodeURIComponent(currentUsername)}`);
+            ws = new WebSocket(`${protocol}//${window.location.host}/ws/game/${roomCode}/${encodeURIComponent(currentUsername)}`);
+
+            ws.onopen = () => {
+                const readyRequest = {
+                    type: "READY_FOR_GAME_START"
+                };
+                ws.send(JSON.stringify(readyRequest));
+            };
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                if (data.type === "CHAT") {
-                    appendChatMessage(data.sender, data.message);
-                }
-                else if (data.type === "GAME_STARTED" || data.type === "GAME_STATE_UPDATE") {
-                    if (data.game_state) {
-                        gameState = data.game_state;
+                if (data.type === "GAME_STATE") {
+                    if (data.gameState) {
+                        gameState = data.gameState;
                         sessionStorage.setItem('gameState', JSON.stringify(gameState));
                         renderGmState(gameState);
                     }
                 }
             };
+
             ws.onclose = () => setTimeout(initWebSocket, 2000);
-        }
-
-        function sendChatMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('chatInput');
-            if (ws && input.value.trim()) {
-                ws.send(JSON.stringify({ type: "CHAT", message: input.value.trim() }));
-                input.value = "";
-            }
-        }
-
-        function appendChatMessage(sender, message) {
-            const chatBox = document.getElementById('chatBox');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = "p-0.5 rounded text-slate-300";
-            msgDiv.innerHTML = `<span class="font-bold text-amber-400">${sender}:</span> ${message}`;
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         initWebSocket();

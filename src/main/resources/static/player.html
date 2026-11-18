@@ -307,22 +307,17 @@
         ws = new WebSocket(`${protocol}//${window.location.host}/ws/game/${roomCode}/${encodeURIComponent(currentUsername)}`);
 
         ws.onopen = () => {
-            console.log("WebSocket соединение открыто, отправляем готовность...");
-
             const readyRequest = {
                 type: "READY_FOR_GAME_START"
             };
-
             ws.send(JSON.stringify(readyRequest));
         };
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === "GAME_STATE") {
-                console.log(`recieved game state`);
                 if (data.gameState) {
                     gameState = data.gameState;
-                    console.log(`${gameState.bunkerDescription}`);
                     sessionStorage.setItem('gameState', JSON.stringify(gameState));
                     renderGameState(gameState);
                 }
@@ -335,15 +330,6 @@
     (function startWebSocketConnection() {
         initWebSocket();
     })();
-
-    function sendChatMessage(e) {
-        e.preventDefault();
-        const input = document.getElementById('chatInput');
-        if (ws && input.value.trim()) {
-            ws.send(JSON.stringify({type: "CHAT", message: input.value.trim()}));
-            input.value = "";
-        }
-    }
 
 </script>
 </body>
