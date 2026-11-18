@@ -118,6 +118,22 @@ class PlayerRepositoryImpl(
                     dao.getSpecialCard()
                 )
             }
+
+            PlayerTraitName.BUNKER_DESCRIPTION -> {
+                return mapper.mapDbModelToDomainModel(
+                    dao.getBunkerDescription()
+                )
+            }
+            PlayerTraitName.BUNKER_INVENTORY -> {
+                return mapper.mapDbModelToDomainModel(
+                    dao.getBunkerInventory()
+                )
+            }
+            PlayerTraitName.CATASTROPHE_DESCRIPTION -> {
+                return mapper.mapDbModelToDomainModel(
+                    dao.getCatastropheDescription()
+                )
+            }
         }
     }
 

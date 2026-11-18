@@ -53,4 +53,18 @@ class PlayerTraitDao(private val database: Database) {
     fun getSpecialCard(): PlayerTraitDBModel = getRandomTrait(SpecialCardTable, "Special Card") { row ->
         PlayerTraitDBModel(id = row[SpecialCardTable.id], value = row[SpecialCardTable.value])
     }
+
+    fun getBunkerDescription(): PlayerTraitDBModel =
+        getRandomTrait(BunkerDescriptionTable, "Bunker Description") { row ->
+            PlayerTraitDBModel(id = row[BunkerDescriptionTable.id], value = row[BunkerDescriptionTable.value])
+        }
+
+    fun getBunkerInventory(): PlayerTraitDBModel = getRandomTrait(BunkerInventoryTable, "Bunker Inventory") { row ->
+        PlayerTraitDBModel(id = row[BunkerInventoryTable.id], value = row[BunkerInventoryTable.value])
+    }
+
+    fun getCatastropheDescription(): PlayerTraitDBModel =
+        getRandomTrait(CatastropheDescriptionTable, "Catastrophe Description") { row ->
+            PlayerTraitDBModel(id = row[CatastropheDescriptionTable.id], value = row[CatastropheDescriptionTable.value])
+        }
 }
