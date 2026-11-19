@@ -1,14 +1,9 @@
 package com.ntnlbk.data.repository
 
-import com.ntnlbk.domain.model.GameStage
-import com.ntnlbk.domain.model.PlayerTraitName
-import com.ntnlbk.domain.model.Room
-import com.ntnlbk.domain.model.RoomState
-import com.ntnlbk.domain.model.UserRole
+import com.ntnlbk.domain.model.*
 import com.ntnlbk.domain.repository.GameRepository
 import com.ntnlbk.domain.usecase.CreatePlayerUseCase
 import com.ntnlbk.domain.usecase.GetRandomTraitUseCase
-import com.ntnlbk.domain.usecase.GetRoomUseCase
 import com.ntnlbk.domain.usecase.UpdateRoomUseCase
 
 class GameRepositoryImpl(
@@ -22,6 +17,7 @@ class GameRepositoryImpl(
             createPlayerUseCase(it.nickname)
         }
         val gameInitialState = RoomState.Game(
+            room.code,
             players = players,
             GameStage.MAIN_PHASE,
             getRandomTraitUseCase(PlayerTraitName.CATASTROPHE_DESCRIPTION).value,

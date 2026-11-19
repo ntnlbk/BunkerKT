@@ -8,6 +8,8 @@ import com.ntnlbk.di.roomModule
 import com.ntnlbk.domain.usecase.AddUserToRoomUseCase
 import com.ntnlbk.domain.usecase.CreateRoomUseCase
 import com.ntnlbk.domain.usecase.GetRoomUseCase
+import com.ntnlbk.domain.usecase.SetIsAliveTraitUseCase
+import com.ntnlbk.domain.usecase.SetTraitIsOpenUseCase
 import com.ntnlbk.domain.usecase.StartGameUseCase
 import com.ntnlbk.plugins.configureWebSockets
 import com.ntnlbk.presentation.dto.mapper.GameDTOMapper
@@ -44,6 +46,8 @@ fun Application.configureRouting() {
     val webSocketManager by inject<WebSocketManager>()
     val startGameUseCase by inject<StartGameUseCase>()
     val gameDTOMapper by inject<GameDTOMapper>()
+    val setIsAliveTraitUseCase by inject<SetIsAliveTraitUseCase>()
+    val setTraitIsOpenUseCase by inject<SetTraitIsOpenUseCase>()
     routing {
         staticResources("/", "static") {
             default("index.html")
@@ -54,6 +58,8 @@ fun Application.configureRouting() {
             webSocketManager,
             gameDTOMapper,
             getRoomUseCase,
+            setIsAliveTraitUseCase,
+            setTraitIsOpenUseCase
         )
     }
 }

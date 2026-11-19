@@ -4,6 +4,7 @@ sealed class RoomState {
 
     object Lobby: RoomState()
     data class Game(
+        val code: String,
         val players: List<Player>,
         val gameStage: GameStage,
         val catastropheDescription: String,

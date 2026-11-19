@@ -5,13 +5,18 @@ import com.ntnlbk.data.postgresql.PlayerTraitDao
 import com.ntnlbk.domain.model.Player
 import com.ntnlbk.domain.model.PlayerTrait
 import com.ntnlbk.domain.model.PlayerTraitName
+import com.ntnlbk.domain.model.RoomState
 import com.ntnlbk.domain.repository.PlayerRepository
-import java.util.Random
+import com.ntnlbk.domain.usecase.GetRoomUseCase
+import com.ntnlbk.domain.usecase.UpdateRoomUseCase
+import java.util.*
 import kotlin.math.roundToInt
 
 class PlayerRepositoryImpl(
     private val dao: PlayerTraitDao,
     private val mapper: PlayerTraitMapper,
+    private val getRoomUseCase: GetRoomUseCase,
+    private val updateRoomUseCase: UpdateRoomUseCase,
 ) : PlayerRepository {
 
     override fun createPlayer(nickname: String): Player {
@@ -27,8 +32,8 @@ class PlayerRepositoryImpl(
             hobby = getRandomTrait(PlayerTraitName.HOBBY),
             phobia = getRandomTrait(PlayerTraitName.PHOBIA),
             baggage = getRandomTrait(PlayerTraitName.BAGGAGE),
-            factOne = getRandomTrait(PlayerTraitName.FACT),
-            factTwo = getRandomTrait(PlayerTraitName.FACT),
+            factOne = getRandomTrait(PlayerTraitName.FACT_1),
+            factTwo = getRandomTrait(PlayerTraitName.FACT_2),
             specialCards = listOf(
                 getRandomTrait(PlayerTraitName.SPECIAL_CARD).value,
                 getRandomTrait(PlayerTraitName.SPECIAL_CARD).value,
@@ -78,6 +83,7 @@ class PlayerRepositoryImpl(
                     ).toString()
                 )
             }
+
             PlayerTraitName.HEALTH -> {
                 return mapper.mapDbModelToDomainModel(
                     dao.getHealth()
@@ -89,6 +95,7 @@ class PlayerRepositoryImpl(
                     ((1..10).random() * 10).toString()
                 )
             }
+
             PlayerTraitName.HOBBY -> {
                 return mapper.mapDbModelToDomainModel(
                     dao.getHobby()
@@ -107,7 +114,13 @@ class PlayerRepositoryImpl(
                 )
             }
 
-            PlayerTraitName.FACT -> {
+            PlayerTraitName.FACT_1 -> {
+                return mapper.mapDbModelToDomainModel(
+                    dao.getFact()
+                )
+            }
+
+            PlayerTraitName.FACT_2 -> {
                 return mapper.mapDbModelToDomainModel(
                     dao.getFact()
                 )
@@ -124,17 +137,85 @@ class PlayerRepositoryImpl(
                     dao.getBunkerDescription()
                 )
             }
+
             PlayerTraitName.BUNKER_INVENTORY -> {
                 return mapper.mapDbModelToDomainModel(
                     dao.getBunkerInventory()
                 )
             }
+
             PlayerTraitName.CATASTROPHE_DESCRIPTION -> {
                 return mapper.mapDbModelToDomainModel(
                     dao.getCatastropheDescription()
                 )
             }
         }
+    }
+
+    override fun setIsAliveTrait(
+        game: RoomState.Game,
+        playerNickname: String,
+        isAlive: Boolean
+    ): RoomState.Game {
+        var room = getRoomUseCase(game.code) ?: throw Exception("Cannot find room with code ${game.code}")
+        room = updateRoomUseCase(
+            game.code, room.copy(
+                roomState = game.copy(
+                    players = game.players.map {
+                        if (it.nickname == playerNickname) {
+                            it.copy(
+                                isAlive = isAlive
+                            )
+                        } else {
+                            it
+                        }
+                    }
+                )
+            ))
+        return room.roomState as RoomState.Game
+    }
+
+    override fun setTraitIsOpen(
+        game: RoomState.Game,
+        playerNickname: String,
+        trait: PlayerTraitName,
+        isOpen: Boolean
+    ): RoomState.Game {
+        var room = getRoomUseCase(game.code) ?: throw Exception("Cannot find room with code ${game.code}")
+        room = updateRoomUseCase(
+            game.code, room.copy(
+                roomState = game.copy(
+                    players = game.players.map {
+                        if (it.nickname == playerNickname) {
+                            when (trait) {
+                                PlayerTraitName.SEX -> it.copy(sex = it.sex.copy(isOpen = isOpen))
+                                PlayerTraitName.BIOLOGY -> it.copy(biology = it.biology.copy(isOpen = isOpen))
+                                PlayerTraitName.AGE -> it.copy(age = it.age.copy(isOpen = isOpen))
+                                PlayerTraitName.PROFESSION -> it.copy(profession = it.profession.copy(isOpen = isOpen))
+                                PlayerTraitName.WORK_EXPERIENCE -> it.copy(
+                                    workExperience = it.workExperience.copy(
+                                        isOpen = isOpen
+                                    )
+                                )
+                                PlayerTraitName.HEALTH -> it.copy(health = it.health.copy(isOpen = isOpen))
+                                PlayerTraitName.HEALTH_SCORE -> it.copy(healthScore = it.healthScore.copy(isOpen = isOpen))
+                                PlayerTraitName.HOBBY -> it.copy(hobby = it.hobby.copy(isOpen = isOpen))
+                                PlayerTraitName.PHOBIA -> it.copy(phobia = it.phobia.copy(isOpen = isOpen))
+                                PlayerTraitName.BAGGAGE -> it.copy(baggage = it.baggage.copy(isOpen = isOpen))
+                                PlayerTraitName.FACT_1 -> it.copy(factOne = it.factOne.copy(isOpen = isOpen))
+                                PlayerTraitName.FACT_2 -> it.copy(factTwo = it.factTwo.copy(isOpen = isOpen))
+                                PlayerTraitName.SPECIAL_CARD -> TODO()
+                                PlayerTraitName.BUNKER_DESCRIPTION -> TODO()
+                                PlayerTraitName.BUNKER_INVENTORY -> TODO()
+                                PlayerTraitName.CATASTROPHE_DESCRIPTION -> TODO()
+                            }
+                        } else {
+                            it
+                        }
+                    }
+                )
+            ))
+        return room.roomState as RoomState.Game
     }
 
     private fun getRandomAgeGaussian(

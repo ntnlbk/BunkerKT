@@ -276,7 +276,60 @@
             ws.onclose = () => setTimeout(initWebSocket, 2000);
         }
 
+        function setPlayerStatus(isAlive) {
+            const select = document.getElementById('selectStatusPlayer');
+            if (!select) return;
+            const nickname = select.value;
+            if (!nickname) {
+                alert('Choose a player from the list');
+                return;
+            }
+            const message = {
+                type: "UPDATE_PLAYER_IS_ALIVE",
+                nickname: nickname,
+                isAlive: Boolean(isAlive)
+            };
+
+            ws.send(JSON.stringify(message));
+        }
+
+        function mockRevealTrait() {
+            const playerSelect = document.getElementById('selectPlayer');
+            const traitSelect = document.getElementById('selectTrait');
+
+            if (!playerSelect || !traitSelect) return;
+
+            const nickname = playerSelect.value;
+            const rawTrait = traitSelect.value;
+
+            if (!nickname) {
+                alert('Choose player');
+                return;
+            }
+
+            if (!rawTrait) {
+                alert('Choose trait');
+                return;
+            }
+
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                console.warn('WebSocket does not run');
+                return;
+            }
+
+            const message = {
+                type: "UPDATE_PLAYER_TRAIT_VISIBILITY",
+                nickname: nickname,
+                traitName: rawTrait.toUpperCase(),
+                isOpen: true
+            };
+
+            ws.send(JSON.stringify(message));
+        }
+
         initWebSocket();
+
+
     </script>
 </body>
 </html>

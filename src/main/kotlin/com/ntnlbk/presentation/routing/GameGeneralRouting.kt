@@ -2,9 +2,12 @@ package com.ntnlbk.presentation.routing
 
 import com.ntnlbk.domain.model.RoomState
 import com.ntnlbk.domain.usecase.GetRoomUseCase
+import com.ntnlbk.domain.usecase.SetIsAliveTraitUseCase
+import com.ntnlbk.domain.usecase.SetTraitIsOpenUseCase
 import com.ntnlbk.presentation.dto.mapper.GameDTOMapper
 import com.ntnlbk.presentation.dto.websocket.ClientMessage
 import com.ntnlbk.presentation.dto.websocket.ServerMessage
+import com.ntnlbk.presentation.dto.websocket.ServerMessage.*
 import com.ntnlbk.presentation.dto.websocket.WebSocketManager
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -14,7 +17,9 @@ import kotlinx.serialization.json.Json
 fun Route.gameGeneralRouting(
     wsManager: WebSocketManager,
     gameDTOMapper: GameDTOMapper,
-    getRoomUseCase: GetRoomUseCase
+    getRoomUseCase: GetRoomUseCase,
+    setIsAliveTraitUseCase: SetIsAliveTraitUseCase,
+    setTraitIsOpenUseCase: SetTraitIsOpenUseCase,
 ) {
 
     val webSocketJson = Json {
@@ -27,7 +32,6 @@ fun Route.gameGeneralRouting(
         val roomCode = call.parameters["code"] ?: throw IllegalArgumentException("Missing room code")
         val nickname = call.parameters["nickname"] ?: throw IllegalArgumentException("Missing username")
         wsManager.addSession(roomCode, this)
-
         try {
             for (frame in incoming) {
                 if (frame is Frame.Text) {
@@ -49,15 +53,43 @@ fun Route.gameGeneralRouting(
                                         "Game has not started yet"
                                     )
 
-                            val response: ServerMessage = ServerMessage.GameState(
+                            val response: ServerMessage = GameState(
                                 gameDTOMapper.mapDomainGameStateToGameStateDTO(gameState)
                             )
                             wsManager.broadcast(roomCode, response)
-//                            webSocketJson.encodeToString(response)
                         }
 
-                        else -> {
+                        ClientMessage.StartGame -> {
                             // ignore
+                        }
+
+                        is ClientMessage.UpdatePlayerIsAlive -> {
+                            val room = getRoomUseCase(roomCode)
+                                ?: throw IllegalArgumentException("Unknown room code $roomCode")
+                            val gameStateUpdated = setIsAliveTraitUseCase(
+                                room.roomState as RoomState.Game,
+                                clientMessage.nickname,
+                                clientMessage.isAlive
+                            )
+                            val response: ServerMessage = GameState(
+                                gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)
+                            )
+                            wsManager.broadcast(roomCode, response)
+                        }
+
+                        is ClientMessage.UpdatePlayerTrait -> {
+                            val room = getRoomUseCase(roomCode)
+                                ?: throw IllegalArgumentException("Unknown room code $roomCode")
+                            val gameStateUpdated = setTraitIsOpenUseCase(
+                                room.roomState as RoomState.Game,
+                                clientMessage.nickname,
+                                clientMessage.traitName,
+                                clientMessage.isOpen
+                            )
+                            val response: ServerMessage = GameState(
+                                gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)
+                            )
+                            wsManager.broadcast(roomCode, response)
                         }
                     }
                 }
