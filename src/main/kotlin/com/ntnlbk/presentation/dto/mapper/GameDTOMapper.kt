@@ -1,8 +1,10 @@
 package com.ntnlbk.presentation.dto.mapper
 
+import com.ntnlbk.domain.model.GameStage
 import com.ntnlbk.domain.model.Player
 import com.ntnlbk.domain.model.PlayerTrait
 import com.ntnlbk.domain.model.RoomState
+import com.ntnlbk.presentation.dto.model.GameStageDTO
 import com.ntnlbk.presentation.dto.model.GameStateDTO
 import com.ntnlbk.presentation.dto.model.PlayerDTO
 import com.ntnlbk.presentation.dto.model.PlayerTraitDTO
@@ -40,6 +42,10 @@ class GameDTOMapper {
 
     fun mapDomainGameStateToGameStateDTO(gameState: RoomState.Game): GameStateDTO {
         return GameStateDTO(
+            stage = when (gameState.gameStage) {
+                GameStage.MAIN_PHASE -> GameStageDTO.MAIN_PHASE
+                GameStage.VOTING -> GameStageDTO.VOTING
+            },
             players = gameState.players.map { mapPlayerDomainToPlayerDTO(it) },
             catastropheDescription = gameState.catastropheDescription,
             bunkerDescription = gameState.bunkerDescription,

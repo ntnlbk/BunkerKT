@@ -197,6 +197,7 @@ class PlayerRepositoryImpl(
                                         isOpen = isOpen
                                     )
                                 )
+
                                 PlayerTraitName.HEALTH -> it.copy(health = it.health.copy(isOpen = isOpen))
                                 PlayerTraitName.HEALTH_SCORE -> it.copy(healthScore = it.healthScore.copy(isOpen = isOpen))
                                 PlayerTraitName.HOBBY -> it.copy(hobby = it.hobby.copy(isOpen = isOpen))
@@ -216,6 +217,48 @@ class PlayerRepositoryImpl(
                 )
             ))
         return room.roomState as RoomState.Game
+    }
+
+    override fun voteAgainst(
+        game: RoomState.Game,
+        playerNickname: String,
+        targetPlayerNickname: String
+    ): RoomState.Game {
+        val voterIndex = game.players.indexOfFirst { it.nickname == playerNickname }
+        val targetIndex = game.players.indexOfFirst { it.nickname == targetPlayerNickname }
+
+        if (voterIndex == -1 || targetIndex == -1) throw Exception("Cannot find player $playerNickname")
+        if (!game.players[voterIndex].isAlive || !game.players[targetIndex].isAlive) throw Exception("Invalid player $playerNickname")
+
+        val targetSlot = targetIndex + 1
+
+        val playersWithUpdatedChoice = game.players.map { player ->
+            if (player.nickname == playerNickname) {
+                player.copy(votesAgainst = targetSlot)
+            } else {
+                player
+            }
+        }
+
+        val updatedPlayers = playersWithUpdatedChoice.mapIndexed { index, targetPlayer ->
+            val currentSlot = index + 1
+            val votersSlots = playersWithUpdatedChoice.mapIndexedNotNull { i, voter ->
+                if (voter.isAlive && voter.votesAgainst == currentSlot) i + 1 else null
+            }
+            targetPlayer.copy(votesFromPlayers = votersSlots)
+        }
+
+        val updatedState = game.copy(players = updatedPlayers)
+
+        val updatedRoom = updateRoomUseCase(
+            updatedState.code,
+            (getRoomUseCase(updatedState.code)
+                ?: throw Exception("Cannot find room with code ${updatedState.code}")).copy(
+                roomState = updatedState
+            )
+        )
+        return updatedRoom.roomState as RoomState.Game
+
     }
 
     private fun getRandomAgeGaussian(

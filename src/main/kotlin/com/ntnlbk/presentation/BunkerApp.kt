@@ -7,10 +7,13 @@ import com.ntnlbk.di.presentationModule
 import com.ntnlbk.di.roomModule
 import com.ntnlbk.domain.usecase.AddUserToRoomUseCase
 import com.ntnlbk.domain.usecase.CreateRoomUseCase
+import com.ntnlbk.domain.usecase.EndVotingUseCase
 import com.ntnlbk.domain.usecase.GetRoomUseCase
 import com.ntnlbk.domain.usecase.SetIsAliveTraitUseCase
 import com.ntnlbk.domain.usecase.SetTraitIsOpenUseCase
 import com.ntnlbk.domain.usecase.StartGameUseCase
+import com.ntnlbk.domain.usecase.StartVotingUseCase
+import com.ntnlbk.domain.usecase.VoteAgainstUseCase
 import com.ntnlbk.plugins.configureWebSockets
 import com.ntnlbk.presentation.dto.mapper.GameDTOMapper
 import com.ntnlbk.presentation.dto.mapper.UserDTOMapper
@@ -48,6 +51,10 @@ fun Application.configureRouting() {
     val gameDTOMapper by inject<GameDTOMapper>()
     val setIsAliveTraitUseCase by inject<SetIsAliveTraitUseCase>()
     val setTraitIsOpenUseCase by inject<SetTraitIsOpenUseCase>()
+    val startVotingUseCase by inject<StartVotingUseCase>()
+    val endVotingUseCase by inject<EndVotingUseCase>()
+    val voteAgainstUseCase by inject<VoteAgainstUseCase>()
+
     routing {
         staticResources("/", "static") {
             default("index.html")
@@ -59,7 +66,10 @@ fun Application.configureRouting() {
             gameDTOMapper,
             getRoomUseCase,
             setIsAliveTraitUseCase,
-            setTraitIsOpenUseCase
+            setTraitIsOpenUseCase,
+            startVotingUseCase,
+            endVotingUseCase,
+            voteAgainstUseCase
         )
     }
 }

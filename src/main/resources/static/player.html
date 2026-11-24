@@ -38,12 +38,21 @@
     <div class="flex items-center space-x-2">
         <i class="fa-solid fa-user-shield text-emerald-500 text-lg animate-pulse"></i>
         <span class="text-xs sm:text-sm font-bold tracking-widest text-emerald-400">BUNKER // DOSSIER</span>
+        <span id="stageBadge"
+              class="text-[10px] px-2 py-0.5 rounded border font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+            MAIN PHASE
+        </span>
     </div>
-    <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+    <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end flex-wrap gap-y-1">
         <div class="text-[11px] sm:text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/30 truncate">
             ROOM: <span id="headerRoomCode">---</span> | YOU: <span id="headerPlayerName">---</span>
         </div>
         <div class="flex items-center space-x-1.5">
+            <button id="voteHeaderBtn"
+                    onclick="toggleVoteModal()"
+                    class="hidden bg-rose-500/20 border border-rose-500 text-rose-300 px-2.5 py-1 rounded text-xs hover:bg-rose-500 hover:text-slate-950 font-bold transition-colors flex items-center space-x-1 shrink-0 animate-pulse">
+                <i class="fa-solid fa-check-to-slot"></i><span>VOTE</span>
+            </button>
             <button onclick="toggleSpecialCardsModal()"
                     class="bg-amber-500/20 border border-amber-500 text-amber-400 px-2.5 py-1 rounded text-xs hover:bg-amber-500 hover:text-slate-950 transition-colors flex items-center space-x-1 shrink-0">
                 <i class="fa-solid fa-star"></i><span>SPECIAL CARDS</span>
@@ -53,6 +62,27 @@
 </header>
 
 <main class="flex-1 flex flex-col p-2 sm:p-3 overflow-y-auto lg:overflow-hidden space-y-2">
+
+    <div id="votingBanner"
+         class="hidden shrink-0 bg-rose-950/40 border border-rose-500/60 rounded px-3 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-[0_0_20px_rgba(244,63,94,0.15)]">
+        <div class="flex items-center space-x-2.5 text-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shrink-0"></span>
+            <div>
+                <span class="font-bold text-rose-400 uppercase tracking-wider">VOTING</span>
+                <span class="text-slate-300 ml-1.5">— Select a survivor to exile.</span>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 self-end sm:self-auto">
+            <span id="myCurrentVoteLabel"
+                  class="text-[11px] px-2 py-0.5 rounded bg-slate-950/90 border border-rose-500/40 text-rose-300">
+                YOUR VOTE: NONE
+            </span>
+            <button onclick="toggleVoteModal()"
+                    class="bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold text-xs px-3 py-1 rounded transition-colors">
+                CAST VOTE
+            </button>
+        </div>
+    </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 shrink-0">
         <div class="bg-slate-900 border border-slate-800 rounded p-2">
@@ -75,6 +105,7 @@
             <p class="text-xs text-slate-300 leading-snug">Generator, 6mo food reserves, medical kit, water filters.</p>
         </div>
     </div>
+
     <div class="flex-1 flex flex-col min-h-0">
         <div class="flex items-center justify-between mb-1.5 shrink-0 px-1">
             <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wide"><i
@@ -89,6 +120,43 @@
 
 </main>
 
+<!-- Модалка голосования -->
+<div id="voteModal"
+     class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border-2 border-rose-500/70 rounded-xl w-full max-w-md p-4 shadow-[0_0_25px_rgba(244,63,94,0.25)] flex flex-col max-h-[90vh]">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3 shrink-0">
+            <h3 class="text-sm font-bold text-rose-400 uppercase tracking-wide flex items-center space-x-2">
+                <i class="fa-solid fa-check-to-slot text-rose-500"></i><span>Exile Vote Ballot</span>
+            </h3>
+            <button onclick="toggleVoteModal()" class="text-slate-400 hover:text-rose-400 text-sm p-1">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <p class="text-xs text-slate-400 mb-2.5 shrink-0">
+            Choose a survivor to vote against. Slot numbers show who already voted for each player.
+        </p>
+
+        <div id="voteCandidatesList" class="overflow-y-auto flex-1 space-y-2 pr-1 text-xs">
+            <!-- Заполняется динамически в renderVoteModal() -->
+        </div>
+
+        <div class="mt-4 pt-2 border-t border-slate-800 flex items-center space-x-2 shrink-0">
+            <button onclick="toggleVoteModal()"
+                    class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded text-xs transition-colors">
+                CANCEL
+            </button>
+            <button id="confirmVoteBtn"
+                    onclick="submitSelectedVote()"
+                    disabled
+                    class="flex-1 py-2 bg-rose-500 disabled:bg-slate-800 disabled:text-slate-500 hover:bg-rose-400 text-slate-950 font-bold rounded text-xs transition-colors">
+                CONFIRM VOTE
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка специальных карт -->
 <div id="specialCardsModal"
      class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border-2 border-amber-500/60 rounded-xl w-full max-w-md p-4 shadow-[0_0_25px_rgba(245,158,11,0.2)] flex flex-col max-h-[90vh]">
@@ -133,6 +201,36 @@
     document.getElementById('headerPlayerName').innerText = currentUsername;
 
     let gameState = null;
+    let selectedVoteTargetNickname = null;
+
+    function isVotingStage(state) {
+        return state && state.stage === 'VOTING';
+    }
+
+    function getPlayerSlotNumber(state, nickname) {
+        if (!state || !state.players) return null;
+        const idx = state.players.findIndex(p => p.nickname === nickname);
+        return idx >= 0 ? idx + 1 : null;
+    }
+
+    // votesAgainst на игроке — это номер слота (1..12), в которого этот игрок проголосовал
+    function findWhoCurrentUserVotedFor(state) {
+        if (!state || !state.players || !currentUsername) return null;
+
+        const me = state.players.find(p => p.nickname === currentUsername);
+        if (me && typeof me.votesAgainst === 'number' && me.votesAgainst >= 1) {
+            const targetBySlot = state.players[me.votesAgainst - 1];
+            if (targetBySlot) return targetBySlot.nickname;
+        }
+
+        const mySlot = getPlayerSlotNumber(state, currentUsername);
+        if (!mySlot) return null;
+
+        const fallbackTarget = state.players.find(
+            p => Array.isArray(p.votesFromPlayers) && p.votesFromPlayers.includes(mySlot)
+        );
+        return fallbackTarget ? fallbackTarget.nickname : null;
+    }
 
     function toggleSpecialCardsModal() {
         const modal = document.getElementById('specialCardsModal');
@@ -140,6 +238,97 @@
         if (!modal.classList.contains('hidden')) {
             updateSpecialCardsContent();
         }
+    }
+
+    function toggleVoteModal() {
+        if (!isVotingStage(gameState)) return;
+
+        const modal = document.getElementById('voteModal');
+        const willOpen = modal.classList.contains('hidden');
+
+        if (willOpen) {
+            selectedVoteTargetNickname = findWhoCurrentUserVotedFor(gameState);
+            renderVoteModal();
+            modal.classList.remove('hidden');
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    function selectVoteCandidate(nickname) {
+        selectedVoteTargetNickname = nickname;
+        renderVoteModal();
+    }
+
+    function renderVoteModal() {
+        const listEl = document.getElementById('voteCandidatesList');
+        const confirmBtn = document.getElementById('confirmVoteBtn');
+        if (!listEl || !confirmBtn || !gameState) return;
+
+        const players = gameState.players || [];
+        const candidates = players
+            .map((player, index) => ({player, slotNumber: index + 1}))
+            .filter(({player}) => player && player.isAlive);
+
+        if (candidates.length === 0) {
+            listEl.innerHTML = `<div class="text-slate-400 text-center py-4">No eligible survivors to vote for.</div>`;
+            confirmBtn.disabled = true;
+            return;
+        }
+
+        listEl.innerHTML = candidates.map(({player, slotNumber}) => {
+            const isSelected = selectedVoteTargetNickname === player.nickname;
+            const voters = Array.isArray(player.votesFromPlayers) ? player.votesFromPlayers : [];
+            const voteCount = voters.length;
+
+            const voterCircles = voters.length > 0
+                ? voters.map(voterSlot => `
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/60">
+                        ${voterSlot}
+                    </span>
+                `).join('')
+                : `<span class="text-[10px] text-slate-500 italic">No votes yet</span>`;
+
+            return `
+                <button type="button"
+                        onclick="selectVoteCandidate('${player.nickname.replace(/'/g, "\\'")}')"
+                        class="w-full text-left p-2.5 rounded-lg border transition-all flex items-center justify-between gap-2 ${
+                isSelected
+                    ? 'bg-rose-500/20 border-rose-400 text-white shadow-[0_0_12px_rgba(244,63,94,0.2)]'
+                    : 'bg-slate-950/90 border-slate-800 hover:border-rose-500/50 text-slate-200'
+            }">
+                    <div class="min-w-0">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">#${slotNumber}</span>
+                            <span class="font-bold text-sm truncate">${player.nickname}</span>
+                        </div>
+                        <div class="flex items-center flex-wrap gap-1 mt-1.5">
+                            ${voterCircles}
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="block text-xs font-bold text-rose-400">${voteCount} ${voteCount === 1 ? 'vote' : 'votes'}</span>
+                        <span class="text-[10px] uppercase ${isSelected ? 'text-rose-300 font-bold' : 'text-slate-500'}">
+                            ${isSelected ? 'SELECTED' : 'SELECT'}
+                        </span>
+                    </div>
+                </button>
+            `;
+        }).join('');
+
+        confirmBtn.disabled = !selectedVoteTargetNickname;
+    }
+
+    function submitSelectedVote() {
+        if (!selectedVoteTargetNickname) return;
+
+        const voteRequest = {
+            type: "VOTE",
+            nickname: currentUsername,
+            targetNickname: selectedVoteTargetNickname
+        };
+        ws.send(JSON.stringify(voteRequest));
+        toggleVoteModal();
     }
 
     function updateSpecialCardsContent() {
@@ -165,8 +354,75 @@
         }
     }
 
+    function renderStageChrome(state) {
+        const voting = isVotingStage(state);
+        const stageBadge = document.getElementById('stageBadge');
+        const voteHeaderBtn = document.getElementById('voteHeaderBtn');
+        const votingBanner = document.getElementById('votingBanner');
+        const myVoteLabel = document.getElementById('myCurrentVoteLabel');
+
+        if (stageBadge) {
+            if (voting) {
+                stageBadge.textContent = 'VOTING';
+                stageBadge.className = 'text-[10px] px-2 py-0.5 rounded border font-bold tracking-wider bg-rose-500/20 text-rose-300 border-rose-500/60 animate-pulse';
+            } else {
+                stageBadge.textContent = 'MAIN PHASE';
+                stageBadge.className = 'text-[10px] px-2 py-0.5 rounded border font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+            }
+        }
+
+        if (voteHeaderBtn) {
+            voteHeaderBtn.classList.toggle('hidden', !voting);
+        }
+
+        if (votingBanner) {
+            votingBanner.classList.toggle('hidden', !voting);
+        }
+
+        if (voting && myVoteLabel) {
+            const currentTarget = findWhoCurrentUserVotedFor(state);
+            myVoteLabel.textContent = currentTarget
+                ? `YOUR VOTE: ${currentTarget.toUpperCase()}`
+                : 'YOUR VOTE: NONE';
+        }
+    }
+
+    function renderVotesBadgeHtml(player, voting) {
+        const voters = Array.isArray(player?.votesFromPlayers) ? player.votesFromPlayers : [];
+        const voteCount = voters.length;
+
+        // Если голосование не активно и голосов в игроке нет — ничего не показываем
+        if (!voting && voteCount === 0) {
+            return '';
+        }
+
+        const circlesHtml = voters.map(voterSlot => {
+            const voterPlayer = gameState?.players?.[voterSlot - 1];
+            const voterName = voterPlayer ? voterPlayer.nickname : `Slot #${voterSlot}`;
+            return `
+                <span title="Vote from ${voterName} (Slot #${voterSlot})"
+                      class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold bg-rose-500/25 text-rose-200 border border-rose-400/80 shadow-[0_0_8px_rgba(244,63,94,0.35)]">
+                    ${voterSlot}
+                </span>
+            `;
+        }).join('');
+
+        return `
+            <div class="mt-1.5 pt-1.5 border-t border-slate-800/90 flex items-center justify-between gap-1.5">
+                <div class="flex items-center flex-wrap gap-1 min-h-[20px]">
+                    ${circlesHtml || `<span class="text-[10px] text-slate-500 italic">No votes</span>`}
+                </div>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-500/40 shrink-0">
+                    ${voteCount}V
+                </span>
+            </div>
+        `;
+    }
+
     function renderGameState(state) {
         if (!state) return;
+
+        renderStageChrome(state);
 
         if (state.catastropheDescription) {
             document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-3 > div:nth-child(1) p').innerText = state.catastropheDescription;
@@ -187,6 +443,8 @@
         grid.innerHTML = '';
 
         const players = state.players || [];
+        const voting = isVotingStage(state);
+        const myVotedTarget = findWhoCurrentUserVotedFor(state);
 
         for (let i = 0; i < 12; i++) {
             const slotNumber = i + 1; // Порядковый номер карточки (1-12)
@@ -195,6 +453,7 @@
             const nickname = player ? player.nickname : `SLOT #${slotNumber}`;
             const isMe = player && player.nickname === currentUsername;
             const isAlive = player ? player.isAlive : true;
+            const isVotedByMe = isOccupied && myVotedTarget === player.nickname;
 
             const renderTraitItem = (traitObj, fallbackName) => {
                 if (!isOccupied || !traitObj) {
@@ -232,10 +491,12 @@
             const ageVal = getHeaderTraitValue(player ? player.age : null, 'Age');
 
             const card = document.createElement('div');
-            card.className = `relative overflow-hidden bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
+            card.className = `relative overflow-hidden bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between transition-all ${
                 isOccupied
                     ? (isAlive
-                        ? (isMe ? 'border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-emerald-500/70')
+                        ? (isVotedByMe
+                            ? 'border-rose-400 ring-2 ring-rose-500/50 shadow-[0_0_18px_rgba(244,63,94,0.25)]'
+                            : (isMe ? 'border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-emerald-500/70'))
                         : 'border-rose-900/60 opacity-60 bg-rose-950/20')
                     : 'border-slate-800/80 opacity-40'
             }`;
@@ -249,6 +510,7 @@
         ` : '';
 
             const traits = player ? player : {};
+            const votesHtml = isOccupied ? renderVotesBadgeHtml(player, voting) : '';
 
             card.innerHTML = `
             ${exiledStampHtml}
@@ -266,19 +528,23 @@
                             ${nickname} ${isMe ? '(YOU)' : ''}
                         </span>
                     </div>
-                    <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold shrink-0 ${
+                    <div class="flex items-center space-x-1 shrink-0">
+                        ${isVotedByMe ? `<span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-bold bg-rose-500 text-slate-950">Your Vote</span>` : ''}
+                        <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold ${
                 isOccupied
                     ? (isAlive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30')
                     : 'text-slate-600'
             }">
-                        ${isOccupied ? (isAlive ? 'Alive' : 'Dead') : 'Empty'}
-                    </span>
+                            ${isOccupied ? (isAlive ? 'Alive' : 'Dead') : 'Empty'}
+                        </span>
+                    </div>
                 </div>
                 ${isOccupied ? `
                 <div class="flex items-center space-x-2 mt-1 text-[11px] text-slate-300 font-mono">
                     <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-venus-mars mr-1 text-emerald-500"></i>${sexVal}</span>
                     <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-cake-candles mr-1 text-emerald-500"></i>${ageVal} yrs</span>
-                </div>` : ''}
+                </div>
+                ${votesHtml}` : ''}
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-xs flex-1">
@@ -297,6 +563,14 @@
             </div>
         `;
             grid.appendChild(card);
+        }
+
+        if (!document.getElementById('voteModal').classList.contains('hidden')) {
+            if (!voting) {
+                document.getElementById('voteModal').classList.add('hidden');
+            } else {
+                renderVoteModal();
+            }
         }
     }
 

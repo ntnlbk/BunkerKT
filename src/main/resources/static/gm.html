@@ -17,216 +17,372 @@
 </head>
 <body class="min-h-screen lg:h-screen flex flex-col bg-slate-950 text-slate-200 overflow-x-hidden lg:overflow-hidden font-mono">
 
-    <header class="w-full px-4 py-2 flex flex-col sm:flex-row justify-between items-center border-b border-amber-900/40 bg-slate-950 shrink-0 gap-2">
-        <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-shield-cat text-amber-500 text-lg animate-pulse"></i>
-            <span class="text-xs sm:text-sm font-bold tracking-widest text-amber-400">BUNKER // OVERSEER TERMINAL</span>
+<header class="w-full px-4 py-2 flex flex-col sm:flex-row justify-between items-center border-b border-amber-900/40 bg-slate-950 shrink-0 gap-2">
+    <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-shield-cat text-amber-500 text-lg animate-pulse"></i>
+        <span class="text-xs sm:text-sm font-bold tracking-widest text-amber-400">BUNKER // OVERSEER TERMINAL</span>
+        <span id="headerStageBadge"
+              class="text-[10px] px-2 py-0.5 rounded border font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+                MAIN_PHASE
+            </span>
+    </div>
+    <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+        <div class="text-[11px] sm:text-xs text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/30 truncate">
+            ROOM: <span id="headerRoomCode">---</span> | ROLE: GAME MASTER
         </div>
-        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
-            <div class="text-[11px] sm:text-xs text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/30 truncate">
-                ROOM: <span id="headerRoomCode">---</span> | ROLE: GAME MASTER
-            </div>
-        </div>
-    </header>
+    </div>
+</header>
 
-    <main class="flex-1 flex flex-col lg:grid lg:grid-cols-12 p-2.5 gap-2.5 overflow-y-auto lg:overflow-hidden">
-        
-        <div class="lg:col-span-4 bg-slate-900 border-2 border-amber-500/60 rounded-xl p-3.5 flex flex-col space-y-3 shadow-[0_0_20px_rgba(245,158,11,0.15)] shrink-0">
-            <div class="border-b border-slate-800 pb-2">
+<main class="flex-1 flex flex-col lg:grid lg:grid-cols-12 p-2.5 gap-2.5 overflow-y-auto lg:overflow-hidden">
+
+    <div class="lg:col-span-4 bg-slate-900 border-2 border-amber-500/60 rounded-xl p-3.5 flex flex-col space-y-3 shadow-[0_0_20px_rgba(245,158,11,0.15)] shrink-0 overflow-y-auto">
+        <div class="border-b border-slate-800 pb-2 flex items-center justify-between gap-2">
+            <div>
                 <h2 class="text-sm font-bold text-amber-400 uppercase tracking-wide"><i class="fa-solid fa-terminal mr-1.5"></i> Overseer Controls</h2>
                 <p class="text-[11px] text-slate-400">Manage crisis, reveal traits & moderate.</p>
             </div>
+            <span id="panelStageBadge"
+                  class="text-[10px] px-2 py-0.5 rounded border font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shrink-0">
+                    MAIN_PHASE
+                </span>
+        </div>
 
-            <div class="space-y-2">
-                <div class="bg-slate-950 border border-amber-500/30 rounded p-2">
+        <div class="space-y-2">
+            <div class="bg-slate-950 border border-amber-500/30 rounded p-2">
                     <span class="text-[10px] text-amber-500 font-bold uppercase block border-b border-slate-800 pb-0.5 mb-1">
                         <i class="fa-solid fa-radiation mr-1"></i> Apocalypse
                     </span>
-                    <p id="catastropheDesc" class="text-xs text-slate-300 leading-snug">Loading catastrophe...</p>
-                </div>
-                <div class="bg-slate-950 border border-amber-500/30 rounded p-2">
+                <p id="catastropheDesc" class="text-xs text-slate-300 leading-snug">Loading catastrophe...</p>
+            </div>
+            <div class="bg-slate-950 border border-amber-500/30 rounded p-2">
                     <span class="text-[10px] text-amber-500 font-bold uppercase block border-b border-slate-800 pb-0.5 mb-1">
                         <i class="fa-solid fa-shield-halved mr-1"></i> Bunker & Inventory
                     </span>
-                    <p id="bunkerDesc" class="text-xs text-slate-300 leading-snug mb-1">Loading bunker...</p>
-                    <p id="bunkerInv" class="text-[11px] text-slate-400 italic">Inventory...</p>
-                </div>
+                <p id="bunkerDesc" class="text-xs text-slate-300 leading-snug mb-1">Loading bunker...</p>
+                <p id="bunkerInv" class="text-[11px] text-slate-400 italic">Inventory...</p>
             </div>
+        </div>
 
-            <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
-                <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-eye mr-1"></i> Reveal Player Trait</h3>
-                <div class="space-y-1.5">
-                    <select id="selectPlayer" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-                        <option value="">Select Survivor...</option>
+        <!-- Force Vote: выбор "чей голос" и "в кого голос" -->
+        <div class="bg-slate-950 border border-rose-500/40 rounded p-2.5 space-y-2">
+            <h3 class="text-xs font-bold text-rose-400 uppercase">
+                <i class="fa-solid fa-gavel mr-1"></i> Force Vote
+            </h3>
+            <div class="space-y-1.5">
+                <div>
+                    <label for="forceVoterSelect" class="text-[10px] text-slate-400 block mb-0.5">Voter (whose vote)</label>
+                    <select id="forceVoterSelect"
+                            class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-rose-500">
+                        <option value="">Select voter...</option>
                     </select>
-                    <select id="selectTrait" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-                        <option value="">Select Trait...</option>
-                        <option value="profession">Profession</option>
-                        <option value="health">Health</option>
-                        <option value="hobby">Hobby</option>
-                        <option value="phobia">Phobia</option>
-                        <option value="sex">Gender</option>
-                        <option value="age">Age</option>
-                        <option value="baggage">Baggage</option>
-                        <option value="fact_1">Fact 1</option>
-                        <option value="fact_2">Fact 2</option>
+                </div>
+                <div>
+                    <label for="forceTargetSelect" class="text-[10px] text-slate-400 block mb-0.5">Target (voted against)</label>
+                    <select id="forceTargetSelect"
+                            class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-rose-500">
+                        <option value="">Select target...</option>
                     </select>
-                    <button onclick="mockRevealTrait()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
-                        <i class="fa-solid fa-unlock"></i><span>FORCE REVEAL TRAIT</span>
+                </div>
+                <button id="forceVoteBtn"
+                        type="button"
+                        onclick="submitForceVote()"
+                        class="w-full py-2 bg-rose-500 hover:bg-rose-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
+                    <i class="fa-solid fa-check-to-slot"></i><span>CAST FORCE VOTE</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
+            <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-eye mr-1"></i> Reveal Player Trait</h3>
+            <div class="space-y-1.5">
+                <select id="selectPlayer" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Survivor...</option>
+                </select>
+                <select id="selectTrait" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Trait...</option>
+                    <option value="profession">Profession</option>
+                    <option value="health">Health</option>
+                    <option value="hobby">Hobby</option>
+                    <option value="phobia">Phobia</option>
+                    <option value="sex">Gender</option>
+                    <option value="age">Age</option>
+                    <option value="baggage">Baggage</option>
+                    <option value="fact_1">Fact 1</option>
+                    <option value="fact_2">Fact 2</option>
+                </select>
+                <button onclick="mockRevealTrait()" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
+                    <i class="fa-solid fa-unlock"></i><span>FORCE REVEAL TRAIT</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
+            <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-skull mr-1"></i> Survivor Status (Life/Death)</h3>
+            <div class="space-y-1.5">
+                <select id="selectStatusPlayer" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Survivor...</option>
+                </select>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="setPlayerStatus(true)" class="py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-400 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-heart-pulse"></i><span>REVIVE</span>
+                    </button>
+                    <button onclick="setPlayerStatus(false)" class="py-1.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-skull"></i><span>EXECUTE</span>
                     </button>
                 </div>
             </div>
+        </div>
 
-            <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
-                <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-skull mr-1"></i> Survivor Status (Life/Death)</h3>
-                <div class="space-y-1.5">
-                    <select id="selectStatusPlayer" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-                        <option value="">Select Survivor...</option>
-                    </select>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="setPlayerStatus(true)" class="py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 text-emerald-400 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
-                            <i class="fa-solid fa-heart-pulse"></i><span>REVIVE</span>
-                        </button>
-                        <button onclick="setPlayerStatus(false)" class="py-1.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-400 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
-                            <i class="fa-solid fa-skull"></i><span>EXECUTE</span>
-                        </button>
+        <div class="space-y-1.5 pt-1">
+            <span class="text-[10px] text-amber-500/80 uppercase font-bold block">Additional Directives</span>
+            <div class="grid grid-cols-2 gap-1.5">
+                <button onclick="startVoting()" class="py-2 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 text-slate-300 text-[11px] rounded transition-colors text-left flex items-center space-x-1.5">
+                    <i class="fa-solid fa-vote-yea text-amber-500"></i><span>Start Poll</span>
+                </button>
+                <button onclick="endVoting()" class="py-2 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 text-slate-300 text-[11px] rounded transition-colors text-left flex items-center space-x-1.5">
+                    <i class="fa-solid fa-vote-yea text-amber-500"></i><span>Stop Poll</span>
+                </button>
+                <button onclick="alert('Feature coming soon!')" class="py-2 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 text-slate-300 text-[11px] rounded transition-colors text-left flex items-center space-x-1.5">
+                    <i class="fa-solid fa-flag text-amber-500"></i><span>End Game</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-8 flex flex-col min-h-0 bg-slate-900 border border-slate-800 rounded-xl p-3">
+        <div class="flex items-center justify-between mb-2 shrink-0 px-1">
+            <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wide">
+                <i class="fa-solid fa-users mr-1"></i> Global Surveillance (All Dossiers)
+            </h2>
+            <span class="text-[10px] text-slate-400">12 Slots</span>
+        </div>
+
+        <div id="playersGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 overflow-y-auto flex-1 pr-1">
+        </div>
+    </div>
+
+</main>
+
+<script>
+    const roomCode = sessionStorage.getItem('roomCode');
+    const currentUsername = "GM";
+    let gameState = null;
+
+    document.getElementById('headerRoomCode').innerText = roomCode;
+
+    function renderStageBadge(state) {
+        const stage = state?.stage || 'MAIN_PHASE';
+        const isVoting = stage === 'VOTING';
+        const cls = isVoting
+            ? 'text-[10px] px-2 py-0.5 rounded border font-bold tracking-wider bg-rose-500/20 text-rose-300 border-rose-500/60 animate-pulse shrink-0'
+            : 'text-[10px] px-2 py-0.5 rounded border font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shrink-0';
+
+        const headerBadge = document.getElementById('headerStageBadge');
+        const panelBadge = document.getElementById('panelStageBadge');
+
+        if (headerBadge) {
+            headerBadge.textContent = stage;
+            headerBadge.className = cls;
+        }
+        if (panelBadge) {
+            panelBadge.textContent = stage;
+            panelBadge.className = cls;
+        }
+    }
+
+    function syncForceVoteSelects(players) {
+        const voterSelect = document.getElementById('forceVoterSelect');
+        const targetSelect = document.getElementById('forceTargetSelect');
+        const forceBtn = document.getElementById('forceVoteBtn');
+        if (!voterSelect || !targetSelect) return;
+
+        const prevVoter = voterSelect.value;
+        const prevTarget = targetSelect.value;
+
+        const alivePlayers = players
+            .map((player, index) => ({ player, slotNumber: index + 1 }))
+            .filter(({ player }) => player && player.isAlive);
+
+        const optionsHtml = alivePlayers
+            .map(({ player, slotNumber }) => `<option value="${player.nickname.replace(/"/g, '&quot;')}">#${slotNumber} ${player.nickname}</option>`)
+            .join('');
+
+        voterSelect.innerHTML = `<option value="">Select voter...</option>${optionsHtml}`;
+        targetSelect.innerHTML = `<option value="">Select target...</option>${optionsHtml}`;
+
+        if (alivePlayers.some(x => x.player.nickname === prevVoter)) {
+            voterSelect.value = prevVoter;
+        }
+        if (alivePlayers.some(x => x.player.nickname === prevTarget)) {
+            targetSelect.value = prevTarget;
+        }
+
+        if (forceBtn) {
+            forceBtn.disabled = alivePlayers.length === 0;
+        }
+    }
+
+    function sendVote(voterNickname, targetNickname) {
+        if (!voterNickname || !targetNickname) {
+            alert('Choose both voter and target');
+            return;
+        }
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            console.warn('WebSocket does not run');
+            return;
+        }
+
+        const voteRequest = {
+            type: "VOTE",
+            nickname: voterNickname,
+            targetNickname: targetNickname
+        };
+        ws.send(JSON.stringify(voteRequest));
+    }
+
+    function submitForceVote() {
+        const voterNickname = document.getElementById('forceVoterSelect')?.value;
+        const targetNickname = document.getElementById('forceTargetSelect')?.value;
+        sendVote(voterNickname, targetNickname);
+    }
+
+    function renderVotesBadgeHtml(player, state) {
+        const voters = Array.isArray(player?.votesFromPlayers) ? player.votesFromPlayers : [];
+        const voteCount = voters.length;
+        const isVoting = state?.stage === 'VOTING';
+
+        if (!isVoting && voteCount === 0) {
+            return '';
+        }
+
+        const circlesHtml = voters.map(voterSlot => {
+            const voterPlayer = state?.players?.[voterSlot - 1];
+            const voterName = voterPlayer ? voterPlayer.nickname : `Slot #${voterSlot}`;
+            return `
+                    <span title="Vote from ${voterName} (Slot #${voterSlot})"
+                          class="inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold bg-rose-500/25 text-rose-200 border border-rose-400/80 shadow-[0_0_8px_rgba(244,63,94,0.35)]">
+                        ${voterSlot}
+                    </span>
+                `;
+        }).join('');
+
+        return `
+                <div class="mt-1.5 pt-1.5 border-t border-slate-800/90 flex items-center justify-between gap-1.5">
+                    <div class="flex items-center flex-wrap gap-1 min-h-[20px]">
+                        ${circlesHtml || `<span class="text-[10px] text-slate-500 italic">No votes</span>`}
                     </div>
+                    <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-950/80 text-rose-300 border border-rose-500/40 shrink-0">
+                        ${voteCount} votes
+                    </span>
                 </div>
-            </div>
+            `;
+    }
 
-            <div class="space-y-1.5 pt-1">
-                <span class="text-[10px] text-amber-500/80 uppercase font-bold block">Additional Directives</span>
-                <div class="grid grid-cols-2 gap-1.5">
-                    <button onclick="alert('Feature coming soon!')" class="py-2 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 text-slate-300 text-[11px] rounded transition-colors text-left flex items-center space-x-1.5">
-                        <i class="fa-solid fa-vote-yea text-amber-500"></i><span>Trigger Poll</span>
-                    </button>
-                    <button onclick="alert('Feature coming soon!')" class="py-2 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 text-slate-300 text-[11px] rounded transition-colors text-left flex items-center space-x-1.5">
-                        <i class="fa-solid fa-shuffle text-amber-500"></i><span>Swap Card</span>
-                    </button>
-                    <button onclick="alert('Feature coming soon!')" class="py-2 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 text-slate-300 text-[11px] rounded transition-colors text-left flex items-center space-x-1.5">
-                        <i class="fa-solid fa-flag text-amber-500"></i><span>End Game</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+    function renderGmState(state) {
+        if (!state) return;
 
-        <div class="lg:col-span-8 flex flex-col min-h-0 bg-slate-900 border border-slate-800 rounded-xl p-3">
-            <div class="flex items-center justify-between mb-2 shrink-0 px-1">
-                <h2 class="text-xs font-bold text-amber-400 uppercase tracking-wide">
-                    <i class="fa-solid fa-users mr-1"></i> Global Surveillance (All Dossiers)
-                </h2>
-                <span class="text-[10px] text-slate-400">12 Slots</span>
-            </div>
+        renderStageBadge(state);
 
-            <div id="playersGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 overflow-y-auto flex-1 pr-1">
-            </div>
-        </div>
+        if (state.catastropheDescription) {
+            const el = document.getElementById('catastropheDesc');
+            if (el) el.innerText = state.catastropheDescription;
+        }
+        if (state.bunkerDescription) {
+            const el = document.getElementById('bunkerDesc');
+            if (el) el.innerText = state.bunkerDescription;
+        }
+        if (state.bunkerInventory) {
+            const el = document.getElementById('bunkerInv');
+            if (el) el.innerText = "Inventory: " + state.bunkerInventory;
+        }
 
-    </main>
+        const selectPlayer = document.getElementById('selectPlayer');
+        const selectStatusPlayer = document.getElementById('selectStatusPlayer');
 
-    <script>
-        const roomCode = sessionStorage.getItem('roomCode');
-        const currentUsername = "GM"
-        
-        document.getElementById('headerRoomCode').innerText = roomCode;
+        if (selectPlayer) selectPlayer.innerHTML = '<option value="">Select Survivor...</option>';
+        if (selectStatusPlayer) selectStatusPlayer.innerHTML = '<option value="">Select Survivor...</option>';
 
-        function renderGmState(state) {
-            if (!state) return;
-
-            if (state.catastropheDescription) {
-                const el = document.getElementById('catastropheDesc');
-                if (el) el.innerText = state.catastropheDescription;
-            }
-            if (state.bunkerDescription) {
-                const el = document.getElementById('bunkerDesc');
-                if (el) el.innerText = state.bunkerDescription;
-            }
-            if (state.bunkerInventory) {
-                const el = document.getElementById('bunkerInv');
-                if (el) el.innerText = "Inventory: " + state.bunkerInventory;
+        const players = state.players || [];
+        players.forEach(p => {
+            if (selectPlayer) {
+                const opt1 = document.createElement('option');
+                opt1.value = p.nickname;
+                opt1.innerText = p.nickname;
+                selectPlayer.appendChild(opt1);
             }
 
-            const selectPlayer = document.getElementById('selectPlayer');
-            const selectStatusPlayer = document.getElementById('selectStatusPlayer');
+            if (selectStatusPlayer) {
+                const opt2 = document.createElement('option');
+                opt2.value = p.nickname;
+                opt2.innerText = `${p.nickname} (${p.isAlive ? 'Alive' : 'Dead'})`;
+                selectStatusPlayer.appendChild(opt2);
+            }
+        });
 
-            if (selectPlayer) selectPlayer.innerHTML = '<option value="">Select Survivor...</option>';
-            if (selectStatusPlayer) selectStatusPlayer.innerHTML = '<option value="">Select Survivor...</option>';
+        syncForceVoteSelects(players);
 
-            const players = state.players || [];
-            players.forEach(p => {
-                if (selectPlayer) {
-                    const opt1 = document.createElement('option');
-                    opt1.value = p.nickname;
-                    opt1.innerText = p.nickname;
-                    selectPlayer.appendChild(opt1);
+        const grid = document.getElementById('playersGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        for (let i = 0; i < 12; i++) {
+            const slotNumber = i + 1;
+            const player = players[i] || null;
+            const isOccupied = !!player;
+            const nickname = player ? player.nickname : `SLOT #${slotNumber}`;
+            const isAlive = player ? player.isAlive : true;
+
+            const renderGmTraitItem = (traitObj, fallbackName) => {
+                if (!isOccupied || !traitObj) {
+                    return `<div class="text-slate-600 italic text-xs py-1 truncate">${fallbackName}</div>`;
                 }
 
-                if (selectStatusPlayer) {
-                    const opt2 = document.createElement('option');
-                    opt2.value = p.nickname;
-                    opt2.innerText = `${p.nickname} (${p.isAlive ? 'Alive' : 'Dead'})`;
-                    selectStatusPlayer.appendChild(opt2);
-                }
-            });
+                const isOpenToAll = traitObj.isOpen;
+                const statusBadge = isOpenToAll
+                    ? `<span class="text-[9px] text-emerald-400 font-normal shrink-0 ml-1" title="Открыта всем"><i class="fa-solid fa-eye"></i></span>`
+                    : `<span class="text-[9px] text-amber-500 font-normal shrink-0 ml-1" title="Закрыта (видна только ГМу и игроку)"><i class="fa-solid fa-lock"></i></span>`;
 
-            const grid = document.getElementById('playersGrid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            for (let i = 0; i < 12; i++) {
-                const slotNumber = i + 1;
-                const player = players[i] || null;
-                const isOccupied = !!player;
-                const nickname = player ? player.nickname : `SLOT #${slotNumber}`;
-                const isAlive = player ? player.isAlive : true;
-
-                const renderGmTraitItem = (traitObj, fallbackName) => {
-                    if (!isOccupied || !traitObj) {
-                        return `<div class="text-slate-600 italic text-xs py-1 truncate">${fallbackName}</div>`;
-                    }
-
-                    const isOpenToAll = traitObj.isOpen;
-                    const statusBadge = isOpenToAll
-                        ? `<span class="text-[9px] text-emerald-400 font-normal shrink-0 ml-1" title="Открыта всем"><i class="fa-solid fa-eye"></i></span>`
-                        : `<span class="text-[9px] text-amber-500 font-normal shrink-0 ml-1" title="Закрыта (видна только ГМу и игроку)"><i class="fa-solid fa-lock"></i></span>`;
-
-                    return `
+                return `
                 <div class="flex items-start justify-between text-white text-xs py-1" title="${traitObj.value}">
                     <span class="break-words leading-tight ${isOpenToAll ? 'text-emerald-200' : 'text-slate-300'}">${traitObj.value}</span>
                     ${statusBadge}
                 </div>
             `;
-                };
+            };
 
-                const card = document.createElement('div');
-                card.className = `bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
-                    isOccupied
-                        ? (isAlive ? 'border-amber-500/70 shadow-[0_0_10px_rgba(245,158,11,0.1)]' : 'border-rose-900/60 opacity-65')
-                        : 'border-slate-800/80 opacity-40'
-                }`;
+            const card = document.createElement('div');
+            card.className = `bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
+                isOccupied
+                    ? (isAlive ? 'border-amber-500/70 shadow-[0_0_10px_rgba(245,158,11,0.1)]' : 'border-rose-900/60 opacity-65')
+                    : 'border-slate-800/80 opacity-40'
+            }`;
 
-                const sex = player ? player.sex : null;
-                const age = player ? player.age : null;
-                const profession = player ? player.profession : null;
-                const health = player ? player.health : null;
-                const hobby = player ? player.hobby : null;
-                const phobia = player ? player.phobia : null;
-                const baggage = player ? player.baggage : null;
-                const fact1 = player ? player.factOne : null;
-                const fact2 = player ? player.factTwo : null;
+            const sex = player ? player.sex : null;
+            const age = player ? player.age : null;
+            const profession = player ? player.profession : null;
+            const health = player ? player.health : null;
+            const hobby = player ? player.hobby : null;
+            const phobia = player ? player.phobia : null;
+            const baggage = player ? player.baggage : null;
+            const fact1 = player ? player.factOne : null;
+            const fact2 = player ? player.factTwo : null;
+            const votesHtml = isOccupied ? renderVotesBadgeHtml(player, state) : '';
 
-                card.innerHTML = `
-            <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5 shrink-0">
-                <span class="text-xs sm:text-sm font-bold ${isOccupied ? (isAlive ? 'text-amber-400' : 'text-rose-400 line-through') : 'text-slate-600'} truncate">
-                    ${slotNumber}. ${nickname}
-                </span>
-                <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold ${
-                    isOccupied
-                        ? (isAlive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30')
-                        : 'text-slate-600'
-                }">
-                    ${isOccupied ? (isAlive ? 'Alive' : 'Dead / Exiled') : 'Empty'}
-                </span>
+            card.innerHTML = `
+            <div class="border-b border-slate-800 pb-1.5 mb-1.5 shrink-0">
+                <div class="flex items-center justify-between gap-1">
+                    <span class="text-xs sm:text-sm font-bold ${isOccupied ? (isAlive ? 'text-amber-400' : 'text-rose-400 line-through') : 'text-slate-600'} truncate">
+                        ${slotNumber}. ${nickname}
+                    </span>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded uppercase font-semibold shrink-0 ${
+                isOccupied
+                    ? (isAlive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30')
+                    : 'text-slate-600'
+            }">
+                        ${isOccupied ? (isAlive ? 'Alive' : 'Dead / Exiled') : 'Empty'}
+                    </span>
+                </div>
+                ${votesHtml}
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-xs">
@@ -246,90 +402,102 @@
                 </div>
             </div>
         `;
-                grid.appendChild(card);
-            }
+            grid.appendChild(card);
         }
+    }
 
-        let ws;
-        function initWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}/ws/game/${roomCode}/${encodeURIComponent(currentUsername)}`);
+    let ws;
+    function initWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${protocol}//${window.location.host}/ws/game/${roomCode}/${encodeURIComponent(currentUsername)}`);
 
-            ws.onopen = () => {
-                const readyRequest = {
-                    type: "READY_FOR_GAME_START"
-                };
-                ws.send(JSON.stringify(readyRequest));
+        ws.onopen = () => {
+            const readyRequest = {
+                type: "READY_FOR_GAME_START"
             };
+            ws.send(JSON.stringify(readyRequest));
+        };
 
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.type === "GAME_STATE") {
-                    if (data.gameState) {
-                        gameState = data.gameState;
-                        sessionStorage.setItem('gameState', JSON.stringify(gameState));
-                        renderGmState(gameState);
-                    }
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === "GAME_STATE") {
+                if (data.gameState) {
+                    gameState = data.gameState;
+                    sessionStorage.setItem('gameState', JSON.stringify(gameState));
+                    renderGmState(gameState);
                 }
-            };
+            }
+        };
 
-            ws.onclose = () => setTimeout(initWebSocket, 2000);
+        ws.onclose = () => setTimeout(initWebSocket, 2000);
+    }
+
+    function setPlayerStatus(isAlive) {
+        const select = document.getElementById('selectStatusPlayer');
+        if (!select) return;
+        const nickname = select.value;
+        if (!nickname) {
+            alert('Choose a player from the list');
+            return;
+        }
+        const message = {
+            type: "UPDATE_PLAYER_IS_ALIVE",
+            nickname: nickname,
+            isAlive: Boolean(isAlive)
+        };
+
+        ws.send(JSON.stringify(message));
+    }
+
+    function startVoting() {
+        const message = {
+            type: "START_VOTING"
+        };
+        ws.send(JSON.stringify(message));
+    }
+
+    function endVoting() {
+        const message = {
+            type: "END_VOTING"
+        };
+        ws.send(JSON.stringify(message));
+    }
+
+    function mockRevealTrait() {
+        const playerSelect = document.getElementById('selectPlayer');
+        const traitSelect = document.getElementById('selectTrait');
+
+        if (!playerSelect || !traitSelect) return;
+
+        const nickname = playerSelect.value;
+        const rawTrait = traitSelect.value;
+
+        if (!nickname) {
+            alert('Choose player');
+            return;
         }
 
-        function setPlayerStatus(isAlive) {
-            const select = document.getElementById('selectStatusPlayer');
-            if (!select) return;
-            const nickname = select.value;
-            if (!nickname) {
-                alert('Choose a player from the list');
-                return;
-            }
-            const message = {
-                type: "UPDATE_PLAYER_IS_ALIVE",
-                nickname: nickname,
-                isAlive: Boolean(isAlive)
-            };
-
-            ws.send(JSON.stringify(message));
+        if (!rawTrait) {
+            alert('Choose trait');
+            return;
         }
 
-        function mockRevealTrait() {
-            const playerSelect = document.getElementById('selectPlayer');
-            const traitSelect = document.getElementById('selectTrait');
-
-            if (!playerSelect || !traitSelect) return;
-
-            const nickname = playerSelect.value;
-            const rawTrait = traitSelect.value;
-
-            if (!nickname) {
-                alert('Choose player');
-                return;
-            }
-
-            if (!rawTrait) {
-                alert('Choose trait');
-                return;
-            }
-
-            if (!ws || ws.readyState !== WebSocket.OPEN) {
-                console.warn('WebSocket does not run');
-                return;
-            }
-
-            const message = {
-                type: "UPDATE_PLAYER_TRAIT_VISIBILITY",
-                nickname: nickname,
-                traitName: rawTrait.toUpperCase(),
-                isOpen: true
-            };
-
-            ws.send(JSON.stringify(message));
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            console.warn('WebSocket does not run');
+            return;
         }
 
-        initWebSocket();
+        const message = {
+            type: "UPDATE_PLAYER_TRAIT_VISIBILITY",
+            nickname: nickname,
+            traitName: rawTrait.toUpperCase(),
+            isOpen: true
+        };
 
+        ws.send(JSON.stringify(message));
+    }
 
-    </script>
+    initWebSocket();
+</script>
 </body>
 </html>
