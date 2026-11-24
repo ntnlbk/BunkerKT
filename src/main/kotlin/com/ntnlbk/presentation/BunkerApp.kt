@@ -10,6 +10,8 @@ import com.ntnlbk.domain.usecase.CreateRoomUseCase
 import com.ntnlbk.domain.usecase.EndVotingUseCase
 import com.ntnlbk.domain.usecase.GetRoomUseCase
 import com.ntnlbk.domain.usecase.SetIsAliveTraitUseCase
+import com.ntnlbk.domain.usecase.SetRandomTraitForPlayerUseCase
+import com.ntnlbk.domain.usecase.SetStringAsTraitForPlayerUseCase
 import com.ntnlbk.domain.usecase.SetTraitIsOpenUseCase
 import com.ntnlbk.domain.usecase.StartGameUseCase
 import com.ntnlbk.domain.usecase.StartVotingUseCase
@@ -54,6 +56,8 @@ fun Application.configureRouting() {
     val startVotingUseCase by inject<StartVotingUseCase>()
     val endVotingUseCase by inject<EndVotingUseCase>()
     val voteAgainstUseCase by inject<VoteAgainstUseCase>()
+    val setRandomTraitForPlayerUseCase by inject<SetRandomTraitForPlayerUseCase>()
+    val setStringAsTraitForPlayerUseCase by inject<SetStringAsTraitForPlayerUseCase>()
 
     routing {
         staticResources("/", "static") {
@@ -69,7 +73,9 @@ fun Application.configureRouting() {
             setTraitIsOpenUseCase,
             startVotingUseCase,
             endVotingUseCase,
-            voteAgainstUseCase
+            voteAgainstUseCase,
+            setRandomTraitForPlayerUseCase,
+            setStringAsTraitForPlayerUseCase,
         )
     }
 }

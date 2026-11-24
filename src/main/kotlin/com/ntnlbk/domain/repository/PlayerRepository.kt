@@ -15,9 +15,19 @@ interface PlayerRepository {
         trait: PlayerTraitName,
         isOpen: Boolean
     ): RoomState.Game
+
     fun voteAgainst(
         game: RoomState.Game,
         playerNickname: String,
         targetPlayerNickname: String
+    ): RoomState.Game
+
+    fun setRandomTraitForPlayer(game: RoomState.Game, nickname: String, trait: PlayerTraitName): RoomState.Game
+
+    fun setStringAsTraitForPlayer(
+        game: RoomState.Game,
+        playerNickname: String,
+        trait: PlayerTraitName,
+        traitValue: String,
     ): RoomState.Game
 }

@@ -160,6 +160,68 @@
             </div>
         </div>
 
+        <!-- Заменить характеристику игрока на случайную -->
+        <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
+            <h3 class="text-xs font-bold text-amber-400 uppercase">
+                <i class="fa-solid fa-dice mr-1"></i> Set Random Trait
+            </h3>
+            <div class="space-y-1.5">
+                <select id="selectRandomTraitPlayer" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Survivor...</option>
+                </select>
+                <select id="selectRandomTraitName" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Trait...</option>
+                    <option value="profession">Profession</option>
+                    <option value="health">Health</option>
+                    <option value="hobby">Hobby</option>
+                    <option value="phobia">Phobia</option>
+                    <option value="sex">Gender</option>
+                    <option value="age">Age</option>
+                    <option value="baggage">Baggage</option>
+                    <option value="fact_1">Fact 1</option>
+                    <option value="fact_2">Fact 2</option>
+                </select>
+                <button type="button"
+                        onclick="setRandomTraitForPlayer()"
+                        class="w-full py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
+                    <i class="fa-solid fa-shuffle"></i><span>SET RANDOM TRAIT</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Задать вручную текстовое значение характеристики игрока -->
+        <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
+            <h3 class="text-xs font-bold text-amber-400 uppercase">
+                <i class="fa-solid fa-pen-to-square mr-1"></i> Set Custom Trait Value
+            </h3>
+            <div class="space-y-1.5">
+                <select id="selectCustomTraitPlayer" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Survivor...</option>
+                </select>
+                <select id="selectCustomTraitName" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Trait...</option>
+                    <option value="profession">Profession</option>
+                    <option value="health">Health</option>
+                    <option value="hobby">Hobby</option>
+                    <option value="phobia">Phobia</option>
+                    <option value="sex">Gender</option>
+                    <option value="age">Age</option>
+                    <option value="baggage">Baggage</option>
+                    <option value="fact_1">Fact 1</option>
+                    <option value="fact_2">Fact 2</option>
+                </select>
+                <input id="customTraitValueInput"
+                       type="text"
+                       placeholder="Enter trait value..."
+                       class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 font-sans">
+                <button type="button"
+                        onclick="setStringAsTraitValueForPlayer()"
+                        class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
+                    <i class="fa-solid fa-check"></i><span>APPLY TRAIT VALUE</span>
+                </button>
+            </div>
+        </div>
+
         <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
             <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-skull mr-1"></i> Survivor Status (Life/Death)</h3>
             <div class="space-y-1.5">
@@ -394,6 +456,23 @@
             `;
     }
 
+    function syncPlayerSelect(selectId, players, previousValue) {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+
+        select.innerHTML = '<option value="">Select Survivor...</option>';
+        players.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.nickname;
+            opt.innerText = p.nickname;
+            select.appendChild(opt);
+        });
+
+        if (previousValue && players.some(p => p.nickname === previousValue)) {
+            select.value = previousValue;
+        }
+    }
+
     function renderGmState(state) {
         if (!state) return;
 
@@ -413,27 +492,33 @@
         }
 
         const selectPlayer = document.getElementById('selectPlayer');
+        const selectRandomTraitPlayer = document.getElementById('selectRandomTraitPlayer');
+        const selectCustomTraitPlayer = document.getElementById('selectCustomTraitPlayer');
         const selectStatusPlayer = document.getElementById('selectStatusPlayer');
 
-        if (selectPlayer) selectPlayer.innerHTML = '<option value="">Select Survivor...</option>';
-        if (selectStatusPlayer) selectStatusPlayer.innerHTML = '<option value="">Select Survivor...</option>';
+        const prevPlayer = selectPlayer ? selectPlayer.value : '';
+        const prevRandomPlayer = selectRandomTraitPlayer ? selectRandomTraitPlayer.value : '';
+        const prevCustomPlayer = selectCustomTraitPlayer ? selectCustomTraitPlayer.value : '';
+        const prevStatusPlayer = selectStatusPlayer ? selectStatusPlayer.value : '';
 
         const players = state.players || [];
-        players.forEach(p => {
-            if (selectPlayer) {
-                const opt1 = document.createElement('option');
-                opt1.value = p.nickname;
-                opt1.innerText = p.nickname;
-                selectPlayer.appendChild(opt1);
-            }
 
-            if (selectStatusPlayer) {
+        syncPlayerSelect('selectPlayer', players, prevPlayer);
+        syncPlayerSelect('selectRandomTraitPlayer', players, prevRandomPlayer);
+        syncPlayerSelect('selectCustomTraitPlayer', players, prevCustomPlayer);
+
+        if (selectStatusPlayer) {
+            selectStatusPlayer.innerHTML = '<option value="">Select Survivor...</option>';
+            players.forEach(p => {
                 const opt2 = document.createElement('option');
                 opt2.value = p.nickname;
                 opt2.innerText = `${p.nickname} (${p.isAlive ? 'Alive' : 'Dead'})`;
                 selectStatusPlayer.appendChild(opt2);
+            });
+            if (prevStatusPlayer && players.some(p => p.nickname === prevStatusPlayer)) {
+                selectStatusPlayer.value = prevStatusPlayer;
             }
-        });
+        }
 
         syncForceVoteSelects(players);
 
@@ -611,6 +696,74 @@
         };
 
         ws.send(JSON.stringify(message));
+    }
+
+    function setRandomTraitForPlayer() {
+        const playerSelect = document.getElementById('selectRandomTraitPlayer');
+        const traitSelect = document.getElementById('selectRandomTraitName');
+        if (!playerSelect || !traitSelect) return;
+
+        const nickname = playerSelect.value;
+        const rawTrait = traitSelect.value;
+
+        if (!nickname) {
+            alert('Choose player');
+            return;
+        }
+        if (!rawTrait) {
+            alert('Choose trait');
+            return;
+        }
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            console.warn('WebSocket does not run');
+            return;
+        }
+
+        const message = {
+            type: "SET_RANDOM_TRAIT_FOR_PLAYER",
+            nickname: nickname,
+            traitName: rawTrait.toUpperCase()
+        };
+
+        ws.send(JSON.stringify(message));
+    }
+
+    function setStringAsTraitValueForPlayer() {
+        const playerSelect = document.getElementById('selectCustomTraitPlayer');
+        const traitSelect = document.getElementById('selectCustomTraitName');
+        const valueInput = document.getElementById('customTraitValueInput');
+        if (!playerSelect || !traitSelect || !valueInput) return;
+
+        const nickname = playerSelect.value;
+        const rawTrait = traitSelect.value;
+        const value = valueInput.value.trim();
+
+        if (!nickname) {
+            alert('Choose player');
+            return;
+        }
+        if (!rawTrait) {
+            alert('Choose trait');
+            return;
+        }
+        if (!value) {
+            alert('Enter trait value');
+            return;
+        }
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            console.warn('WebSocket does not run');
+            return;
+        }
+
+        const message = {
+            type: "SET_STRING_AS_TRAIT_VALUE_FOR_PLAYER",
+            nickname: nickname,
+            traitName: rawTrait.toUpperCase(),
+            value: value
+        };
+
+        ws.send(JSON.stringify(message));
+        valueInput.value = '';
     }
 
     initWebSocket();

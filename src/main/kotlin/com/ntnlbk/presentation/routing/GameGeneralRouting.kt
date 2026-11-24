@@ -4,6 +4,8 @@ import com.ntnlbk.domain.model.RoomState
 import com.ntnlbk.domain.usecase.EndVotingUseCase
 import com.ntnlbk.domain.usecase.GetRoomUseCase
 import com.ntnlbk.domain.usecase.SetIsAliveTraitUseCase
+import com.ntnlbk.domain.usecase.SetRandomTraitForPlayerUseCase
+import com.ntnlbk.domain.usecase.SetStringAsTraitForPlayerUseCase
 import com.ntnlbk.domain.usecase.SetTraitIsOpenUseCase
 import com.ntnlbk.domain.usecase.StartVotingUseCase
 import com.ntnlbk.domain.usecase.VoteAgainstUseCase
@@ -25,7 +27,9 @@ fun Route.gameGeneralRouting(
     setTraitIsOpenUseCase: SetTraitIsOpenUseCase,
     startVotingUseCase: StartVotingUseCase,
     endVotingUseCase: EndVotingUseCase,
-    voteAgainstUseCase: VoteAgainstUseCase
+    voteAgainstUseCase: VoteAgainstUseCase,
+    setRandomTraitForPlayerUseCase: SetRandomTraitForPlayerUseCase,
+    setStringAsTraitForPlayerUseCase: SetStringAsTraitForPlayerUseCase
 ) {
 
     val webSocketJson = Json {
@@ -125,6 +129,35 @@ fun Route.gameGeneralRouting(
                                 room.roomState as RoomState.Game,
                                 clientMessage.nickname,
                                 clientMessage.targetNickname
+                            )
+                            val response: ServerMessage = GameState(
+                                gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)
+                            )
+                            wsManager.broadcast(roomCode, response)
+                        }
+
+                        is ClientMessage.SetRandomTraitForPlayer -> {
+                            val room = getRoomUseCase(roomCode)
+                                ?: throw IllegalArgumentException("Unknown room code $roomCode")
+                            val gameStateUpdated = setRandomTraitForPlayerUseCase(
+                                room.roomState as RoomState.Game,
+                                clientMessage.nickname,
+                                clientMessage.traitName
+                            )
+                            val response: ServerMessage = GameState(
+                                gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)
+                            )
+                            wsManager.broadcast(roomCode, response)
+                        }
+
+                        is ClientMessage.SetStringAsTraitValueForPlayer -> {
+                            val room = getRoomUseCase(roomCode)
+                                ?: throw IllegalArgumentException("Unknown room code $roomCode")
+                            val gameStateUpdated = setStringAsTraitForPlayerUseCase(
+                                room.roomState as RoomState.Game,
+                                clientMessage.nickname,
+                                clientMessage.traitName,
+                                clientMessage.value
                             )
                             val response: ServerMessage = GameState(
                                 gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)

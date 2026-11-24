@@ -45,6 +45,21 @@ sealed interface ClientMessage {
         val targetNickname: String,
     ) : ClientMessage
 
+    @Serializable
+    @SerialName("SET_RANDOM_TRAIT_FOR_PLAYER")
+    data class SetRandomTraitForPlayer(
+        val nickname: String,
+        val traitName: PlayerTraitName,
+    ) : ClientMessage
+
+    @Serializable
+    @SerialName("SET_STRING_AS_TRAIT_VALUE_FOR_PLAYER")
+    data class SetStringAsTraitValueForPlayer(
+        val nickname: String,
+        val traitName: PlayerTraitName,
+        val value: String,
+    ) : ClientMessage
+
 }
 
 @Serializable
