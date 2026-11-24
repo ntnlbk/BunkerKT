@@ -47,6 +47,34 @@
                 </span>
         </div>
 
+        <div class="bg-slate-950 border border-amber-500/40 rounded p-2.5 flex items-center justify-between gap-2">
+            <div>
+                <span class="text-[10px] text-amber-400 font-bold uppercase block">
+                    <i class="fa-solid fa-stopwatch mr-1"></i> Stopwatch
+                </span>
+                <div class="flex items-baseline space-x-2 mt-0.5">
+                    <span id="stopwatchDisplay" class="text-lg font-bold text-white tracking-wider">00:00</span>
+                    <span id="stopwatchSecondsLabel" class="text-[10px] text-slate-400">0s</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1.5 shrink-0">
+                <button id="stopwatchToggleBtn"
+                        type="button"
+                        onclick="toggleStopwatch()"
+                        class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors flex items-center space-x-1">
+                    <i id="stopwatchToggleIcon" class="fa-solid fa-play"></i>
+                    <span id="stopwatchToggleText">START</span>
+                </button>
+                <button type="button"
+                        onclick="resetStopwatch()"
+                        title="Reset stopwatch"
+                        class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded text-xs transition-colors flex items-center space-x-1">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>RESET</span>
+                </button>
+            </div>
+        </div>
+
         <div class="space-y-2">
             <div class="bg-slate-950 border border-amber-500/30 rounded p-2">
                     <span class="text-[10px] text-amber-500 font-bold uppercase block border-b border-slate-800 pb-0.5 mb-1">
@@ -63,7 +91,23 @@
             </div>
         </div>
 
-        <!-- Force Vote: выбор "чей голос" и "в кого голос" -->
+        <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-1.5">
+            <div class="flex items-center justify-between">
+                <label for="gmNotesInput" class="text-xs font-bold text-amber-400 uppercase">
+                    <i class="fa-solid fa-note-sticky mr-1"></i> GM Notes
+                </label>
+                <button type="button"
+                        onclick="clearGmNotes()"
+                        class="text-[10px] text-slate-400 hover:text-rose-400 transition-colors">
+                    Clear
+                </button>
+            </div>
+            <textarea id="gmNotesInput"
+                      rows="3"
+                      placeholder="Short notes on speeches, cards, votes..."
+                      class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 resize-y font-sans"></textarea>
+        </div>
+
         <div class="bg-slate-950 border border-rose-500/40 rounded p-2.5 space-y-2">
             <h3 class="text-xs font-bold text-rose-400 uppercase">
                 <i class="fa-solid fa-gavel mr-1"></i> Force Vote
@@ -169,6 +213,78 @@
     let gameState = null;
 
     document.getElementById('headerRoomCode').innerText = roomCode;
+
+    let stopwatchSeconds = 0;
+    let stopwatchIntervalId = null;
+
+    function formatStopwatchTime(totalSec) {
+        const mins = Math.floor(totalSec / 60);
+        const secs = totalSec % 60;
+        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function renderStopwatch() {
+        const displayEl = document.getElementById('stopwatchDisplay');
+        const secLabelEl = document.getElementById('stopwatchSecondsLabel');
+        const toggleIcon = document.getElementById('stopwatchToggleIcon');
+        const toggleText = document.getElementById('stopwatchToggleText');
+        const toggleBtn = document.getElementById('stopwatchToggleBtn');
+
+        if (displayEl) displayEl.textContent = formatStopwatchTime(stopwatchSeconds);
+        if (secLabelEl) secLabelEl.textContent = `${stopwatchSeconds}s`;
+
+        const isRunning = stopwatchIntervalId !== null;
+        if (toggleIcon) {
+            toggleIcon.className = isRunning ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+        }
+        if (toggleText) {
+            toggleText.textContent = isRunning ? 'PAUSE' : 'START';
+        }
+        if (toggleBtn) {
+            toggleBtn.className = isRunning
+                ? 'px-2.5 py-1.5 bg-amber-300 hover:bg-amber-200 text-slate-950 font-bold rounded text-xs transition-colors flex items-center space-x-1'
+                : 'px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors flex items-center space-x-1';
+        }
+    }
+
+    function toggleStopwatch() {
+        if (stopwatchIntervalId !== null) {
+            clearInterval(stopwatchIntervalId);
+            stopwatchIntervalId = null;
+        } else {
+            stopwatchIntervalId = setInterval(() => {
+                stopwatchSeconds += 1;
+                renderStopwatch();
+            }, 1000);
+        }
+        renderStopwatch();
+    }
+
+    function resetStopwatch() {
+        if (stopwatchIntervalId !== null) {
+            clearInterval(stopwatchIntervalId);
+            stopwatchIntervalId = null;
+        }
+        stopwatchSeconds = 0;
+        renderStopwatch();
+    }
+
+    renderStopwatch();
+
+    const notesStorageKey = `gmNotes_${roomCode || 'default'}`;
+    const gmNotesInput = document.getElementById('gmNotesInput');
+    if (gmNotesInput) {
+        gmNotesInput.value = sessionStorage.getItem(notesStorageKey) || '';
+        gmNotesInput.addEventListener('input', () => {
+            sessionStorage.setItem(notesStorageKey, gmNotesInput.value);
+        });
+    }
+
+    function clearGmNotes() {
+        if (!gmNotesInput) return;
+        gmNotesInput.value = '';
+        sessionStorage.removeItem(notesStorageKey);
+    }
 
     function renderStageBadge(state) {
         const stage = state?.stage || 'MAIN_PHASE';

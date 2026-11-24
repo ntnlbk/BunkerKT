@@ -120,7 +120,6 @@
 
 </main>
 
-<!-- Модалка голосования -->
 <div id="voteModal"
      class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border-2 border-rose-500/70 rounded-xl w-full max-w-md p-4 shadow-[0_0_25px_rgba(244,63,94,0.25)] flex flex-col max-h-[90vh]">
@@ -138,7 +137,6 @@
         </p>
 
         <div id="voteCandidatesList" class="overflow-y-auto flex-1 space-y-2 pr-1 text-xs">
-            <!-- Заполняется динамически в renderVoteModal() -->
         </div>
 
         <div class="mt-4 pt-2 border-t border-slate-800 flex items-center space-x-2 shrink-0">
@@ -156,7 +154,6 @@
     </div>
 </div>
 
-<!-- Модалка специальных карт -->
 <div id="specialCardsModal"
      class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border-2 border-amber-500/60 rounded-xl w-full max-w-md p-4 shadow-[0_0_25px_rgba(245,158,11,0.2)] flex flex-col max-h-[90vh]">
@@ -213,7 +210,6 @@
         return idx >= 0 ? idx + 1 : null;
     }
 
-    // votesAgainst на игроке — это номер слота (1..12), в которого этот игрок проголосовал
     function findWhoCurrentUserVotedFor(state) {
         if (!state || !state.players || !currentUsername) return null;
 
@@ -391,7 +387,6 @@
         const voters = Array.isArray(player?.votesFromPlayers) ? player.votesFromPlayers : [];
         const voteCount = voters.length;
 
-        // Если голосование не активно и голосов в игроке нет — ничего не показываем
         if (!voting && voteCount === 0) {
             return '';
         }
