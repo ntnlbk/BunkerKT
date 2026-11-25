@@ -1,4 +1,4 @@
-package com.ntnlbk.domain.usecase
+package com.ntnlbk.domain.usecase.game
 
 import com.ntnlbk.domain.model.Room
 import com.ntnlbk.domain.repository.GameRepository

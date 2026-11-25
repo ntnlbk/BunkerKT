@@ -7,8 +7,8 @@ import com.ntnlbk.domain.model.PlayerTrait
 import com.ntnlbk.domain.model.PlayerTraitName
 import com.ntnlbk.domain.model.RoomState
 import com.ntnlbk.domain.repository.PlayerRepository
-import com.ntnlbk.domain.usecase.GetRoomUseCase
-import com.ntnlbk.domain.usecase.UpdateRoomUseCase
+import com.ntnlbk.domain.usecase.room.GetRoomUseCase
+import com.ntnlbk.domain.usecase.room.UpdateRoomUseCase
 import java.util.*
 import kotlin.math.roundToInt
 

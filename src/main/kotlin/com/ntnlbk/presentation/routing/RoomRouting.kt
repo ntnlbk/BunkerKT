@@ -2,10 +2,10 @@ package com.ntnlbk.presentation.routing
 
 import com.ntnlbk.domain.model.User
 import com.ntnlbk.domain.model.UserRole
-import com.ntnlbk.domain.usecase.AddUserToRoomUseCase
-import com.ntnlbk.domain.usecase.CreateRoomUseCase
-import com.ntnlbk.domain.usecase.GetRoomUseCase
-import com.ntnlbk.domain.usecase.StartGameUseCase
+import com.ntnlbk.domain.usecase.room.AddUserToRoomUseCase
+import com.ntnlbk.domain.usecase.room.CreateRoomUseCase
+import com.ntnlbk.domain.usecase.room.GetRoomUseCase
+import com.ntnlbk.domain.usecase.game.StartGameUseCase
 import com.ntnlbk.presentation.dto.api.CreateRoomRequest
 import com.ntnlbk.presentation.dto.api.JoinRoomRequest
 import com.ntnlbk.presentation.dto.api.RoomDefaultResponse

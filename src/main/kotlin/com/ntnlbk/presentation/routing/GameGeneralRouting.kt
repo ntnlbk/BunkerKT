@@ -1,14 +1,14 @@
 package com.ntnlbk.presentation.routing
 
 import com.ntnlbk.domain.model.RoomState
-import com.ntnlbk.domain.usecase.EndVotingUseCase
-import com.ntnlbk.domain.usecase.GetRoomUseCase
-import com.ntnlbk.domain.usecase.SetIsAliveTraitUseCase
-import com.ntnlbk.domain.usecase.SetRandomTraitForPlayerUseCase
-import com.ntnlbk.domain.usecase.SetStringAsTraitForPlayerUseCase
-import com.ntnlbk.domain.usecase.SetTraitIsOpenUseCase
-import com.ntnlbk.domain.usecase.StartVotingUseCase
-import com.ntnlbk.domain.usecase.VoteAgainstUseCase
+import com.ntnlbk.domain.usecase.game.EndVotingUseCase
+import com.ntnlbk.domain.usecase.room.GetRoomUseCase
+import com.ntnlbk.domain.usecase.player.SetIsAliveTraitUseCase
+import com.ntnlbk.domain.usecase.player.SetRandomTraitForPlayerUseCase
+import com.ntnlbk.domain.usecase.player.SetStringAsTraitForPlayerUseCase
+import com.ntnlbk.domain.usecase.player.SetTraitIsOpenUseCase
+import com.ntnlbk.domain.usecase.game.StartVotingUseCase
+import com.ntnlbk.domain.usecase.player.VoteAgainstUseCase
 import com.ntnlbk.presentation.dto.mapper.GameDTOMapper
 import com.ntnlbk.presentation.dto.websocket.ClientMessage
 import com.ntnlbk.presentation.dto.websocket.ServerMessage

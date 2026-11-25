@@ -2,13 +2,13 @@ package com.ntnlbk.di
 
 import com.ntnlbk.data.repository.PlayerRepositoryImpl
 import com.ntnlbk.domain.repository.PlayerRepository
-import com.ntnlbk.domain.usecase.CreatePlayerUseCase
-import com.ntnlbk.domain.usecase.GetRandomTraitUseCase
-import com.ntnlbk.domain.usecase.SetIsAliveTraitUseCase
-import com.ntnlbk.domain.usecase.SetRandomTraitForPlayerUseCase
-import com.ntnlbk.domain.usecase.SetStringAsTraitForPlayerUseCase
-import com.ntnlbk.domain.usecase.SetTraitIsOpenUseCase
-import com.ntnlbk.domain.usecase.VoteAgainstUseCase
+import com.ntnlbk.domain.usecase.player.CreatePlayerUseCase
+import com.ntnlbk.domain.usecase.player.GetRandomTraitUseCase
+import com.ntnlbk.domain.usecase.player.SetIsAliveTraitUseCase
+import com.ntnlbk.domain.usecase.player.SetRandomTraitForPlayerUseCase
+import com.ntnlbk.domain.usecase.player.SetStringAsTraitForPlayerUseCase
+import com.ntnlbk.domain.usecase.player.SetTraitIsOpenUseCase
+import com.ntnlbk.domain.usecase.player.VoteAgainstUseCase
 import org.koin.dsl.module
 
 val playerModule = module {

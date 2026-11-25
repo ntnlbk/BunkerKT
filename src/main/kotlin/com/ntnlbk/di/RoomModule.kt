@@ -3,10 +3,10 @@ package com.ntnlbk.di
 
 import com.ntnlbk.data.repository.RoomRepositoryImpl
 import com.ntnlbk.domain.repository.RoomRepository
-import com.ntnlbk.domain.usecase.AddUserToRoomUseCase
-import com.ntnlbk.domain.usecase.CreateRoomUseCase
-import com.ntnlbk.domain.usecase.GetRoomUseCase
-import com.ntnlbk.domain.usecase.UpdateRoomUseCase
+import com.ntnlbk.domain.usecase.room.AddUserToRoomUseCase
+import com.ntnlbk.domain.usecase.room.CreateRoomUseCase
+import com.ntnlbk.domain.usecase.room.GetRoomUseCase
+import com.ntnlbk.domain.usecase.room.UpdateRoomUseCase
 import org.koin.dsl.module
 
 val roomModule = module {

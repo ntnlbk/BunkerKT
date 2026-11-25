@@ -2,10 +2,10 @@ package com.ntnlbk.data.repository
 
 import com.ntnlbk.domain.model.*
 import com.ntnlbk.domain.repository.GameRepository
-import com.ntnlbk.domain.usecase.CreatePlayerUseCase
-import com.ntnlbk.domain.usecase.GetRandomTraitUseCase
-import com.ntnlbk.domain.usecase.GetRoomUseCase
-import com.ntnlbk.domain.usecase.UpdateRoomUseCase
+import com.ntnlbk.domain.usecase.player.CreatePlayerUseCase
+import com.ntnlbk.domain.usecase.player.GetRandomTraitUseCase
+import com.ntnlbk.domain.usecase.room.GetRoomUseCase
+import com.ntnlbk.domain.usecase.room.UpdateRoomUseCase
 
 class GameRepositoryImpl(
     private val updateRoomUseCase: UpdateRoomUseCase,
