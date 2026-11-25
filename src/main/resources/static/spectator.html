@@ -197,6 +197,42 @@
                 return `<div class="text-white font-medium text-xs py-1 break-words leading-tight" title="${traitObj.value}">${traitObj.value}</div>`;
             };
 
+            const renderHealthWithScore = (healthObj, scoreObj) => {
+                if (!isOccupied) {
+                    return `<div class="text-slate-600 italic text-xs py-1 truncate">Health</div>`;
+                }
+
+                const canShowHealth = Boolean(healthObj) && (isMe || Boolean(healthObj.isOpen));
+                const canShowScore = Boolean(scoreObj)
+                    && scoreObj.value !== undefined
+                    && scoreObj.value !== null
+                    && String(scoreObj.value) !== ''
+                    && (isMe || Boolean(scoreObj.isOpen));
+
+                const healthTextHtml = canShowHealth
+                    ? `<span class="text-white ${isMe ? '' : 'font-medium'} break-words leading-tight" title="${healthObj.value}">${healthObj.value}</span>`
+                    : `<span class="text-slate-600 italic leading-tight">???</span>`;
+
+                const scoreText = canShowScore ? `${scoreObj.value}%` : '';
+                const scoreBadgeHtml = canShowScore
+                    ? `<span class="text-[11px] font-bold text-rose-400 bg-rose-950/60 border border-rose-500/40 px-1.5 py-0.2 rounded shrink-0 ml-1" title="Disease severity: ${scoreText}">${scoreText}</span>`
+                    : '';
+
+                const combinedTitle = [
+                    canShowHealth ? healthObj.value : null,
+                    canShowScore ? `Health score: ${scoreText}` : null
+                ].filter(Boolean).join(' — ');
+
+                return `
+                <div class="flex items-start justify-between gap-1 text-xs py-1" title="${combinedTitle}">
+                    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+                        ${healthTextHtml}
+                        ${scoreBadgeHtml}
+                    </div>
+                </div>
+            `;
+            };
+
             const getHeaderTraitValue = (traitObj, fallback) => {
                 if (!isOccupied || !traitObj) return fallback;
                 if (!isMe && !traitObj.isOpen) return `???`;
@@ -205,6 +241,7 @@
 
             const sexVal = getHeaderTraitValue(player ? player.sex : null, 'Gender');
             const ageVal = getHeaderTraitValue(player ? player.age : null, 'Age');
+            const bioVal = getHeaderTraitValue(player ? player.biology : null, 'Biology');
 
             const card = document.createElement('div');
             card.className = `relative overflow-hidden bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
@@ -251,9 +288,10 @@
                     </span>
                 </div>
                 ${isOccupied ? `
-                <div class="flex items-center space-x-2 mt-1 text-[11px] text-slate-300 font-mono">
+                <div class="flex items-center flex-wrap gap-1.5 mt-1 text-[11px] text-slate-300 font-mono">
                     <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-venus-mars mr-1 text-emerald-500"></i>${sexVal}</span>
                     <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-cake-candles mr-1 text-emerald-500"></i>${ageVal} yrs</span>
+                    <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800"><i class="fa-solid fa-dna mr-1 text-emerald-500"></i>${bioVal}</span>
                 </div>
                 ${votesHtml}` : ''}
             </div>
@@ -261,7 +299,7 @@
             <div class="grid grid-cols-2 gap-2 text-xs flex-1">
                 <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
                     ${renderTraitItem(traits.profession, 'Profession')}
-                    ${renderTraitItem(traits.health, 'Health')}
+                    ${renderHealthWithScore(traits.health, traits.healthScore)}
                     ${renderTraitItem(traits.hobby, 'Hobby')}
                     ${renderTraitItem(traits.phobia, 'Phobia')}
                 </div>

@@ -146,9 +146,11 @@
                     <option value="">Select Trait...</option>
                     <option value="profession">Profession</option>
                     <option value="health">Health</option>
+                    <option value="health_score">Health Score (%)</option>
                     <option value="hobby">Hobby</option>
                     <option value="phobia">Phobia</option>
                     <option value="sex">Gender</option>
+                    <option value="biology">Biology</option>
                     <option value="age">Age</option>
                     <option value="baggage">Baggage</option>
                     <option value="fact_1">Fact 1</option>
@@ -160,7 +162,6 @@
             </div>
         </div>
 
-        <!-- Заменить характеристику игрока на случайную -->
         <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
             <h3 class="text-xs font-bold text-amber-400 uppercase">
                 <i class="fa-solid fa-dice mr-1"></i> Set Random Trait
@@ -173,9 +174,11 @@
                     <option value="">Select Trait...</option>
                     <option value="profession">Profession</option>
                     <option value="health">Health</option>
+                    <option value="health_score">Health Score (%)</option>
                     <option value="hobby">Hobby</option>
                     <option value="phobia">Phobia</option>
                     <option value="sex">Gender</option>
+                    <option value="biology">Biology</option>
                     <option value="age">Age</option>
                     <option value="baggage">Baggage</option>
                     <option value="fact_1">Fact 1</option>
@@ -189,7 +192,6 @@
             </div>
         </div>
 
-        <!-- Задать вручную текстовое значение характеристики игрока -->
         <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
             <h3 class="text-xs font-bold text-amber-400 uppercase">
                 <i class="fa-solid fa-pen-to-square mr-1"></i> Set Custom Trait Value
@@ -202,9 +204,11 @@
                     <option value="">Select Trait...</option>
                     <option value="profession">Profession</option>
                     <option value="health">Health</option>
+                    <option value="health_score">Health Score (%)</option>
                     <option value="hobby">Hobby</option>
                     <option value="phobia">Phobia</option>
                     <option value="sex">Gender</option>
+                    <option value="biology">Biology</option>
                     <option value="age">Age</option>
                     <option value="baggage">Baggage</option>
                     <option value="fact_1">Fact 1</option>
@@ -551,6 +555,91 @@
             `;
             };
 
+            const renderGmHealthWithScore = (healthObj, scoreObj) => {
+                if (!isOccupied) {
+                    return `<div class="text-slate-600 italic text-xs py-1 truncate">Health</div>`;
+                }
+
+                const hasHealth = Boolean(healthObj) && healthObj.value !== undefined && healthObj.value !== null && String(healthObj.value) !== '';
+                const hasScore = Boolean(scoreObj) && scoreObj.value !== undefined && scoreObj.value !== null && String(scoreObj.value) !== '';
+
+                if (!hasHealth && !hasScore) {
+                    return `<div class="text-slate-600 italic text-xs py-1 truncate">Health</div>`;
+                }
+
+                const healthHtml = hasHealth
+                    ? `<span class="break-words leading-tight ${healthObj.isOpen ? 'text-emerald-200' : 'text-slate-300'}">${healthObj.value}</span>`
+                    : `<span class="text-slate-600 italic leading-tight">Health</span>`;
+
+                const healthEyeLock = hasHealth
+                    ? (healthObj.isOpen
+                        ? `<span class="text-[9px] text-emerald-400 font-normal shrink-0 ml-0.5" title="Здоровье открыто всем"><i class="fa-solid fa-eye"></i></span>`
+                        : `<span class="text-[9px] text-amber-500 font-normal shrink-0 ml-0.5" title="Здоровье закрыто"><i class="fa-solid fa-lock"></i></span>`)
+                    : '';
+
+                const scoreText = hasScore ? `${scoreObj.value}%` : '';
+                const scoreHtml = hasScore
+                    ? `<span class="text-[11px] font-bold text-rose-400 bg-rose-950/60 border border-rose-500/40 px-1.5 py-0.2 rounded shrink-0">${scoreText}</span>`
+                    : '';
+
+                const scoreEyeLock = hasScore
+                    ? (scoreObj.isOpen
+                        ? `<span class="text-[9px] text-emerald-400 font-normal shrink-0 ml-0.5" title="Health score открыт всем"><i class="fa-solid fa-eye"></i></span>`
+                        : `<span class="text-[9px] text-amber-500 font-normal shrink-0 ml-0.5" title="Health score закрыт"><i class="fa-solid fa-lock"></i></span>`)
+                    : '';
+
+                const fullTitle = [
+                    hasHealth ? healthObj.value : null,
+                    hasScore ? `Health score: ${scoreText}` : null
+                ].filter(Boolean).join(' — ');
+
+                return `
+                <div class="flex items-start justify-between gap-1 text-xs py-1" title="${fullTitle}">
+                    <div class="flex items-baseline flex-wrap gap-1 min-w-0">
+                        ${healthHtml}
+                        ${scoreHtml}
+                    </div>
+                    <div class="flex items-center shrink-0">
+                        ${healthEyeLock}
+                        ${scoreEyeLock}
+                    </div>
+                </div>
+            `;
+            };
+
+            const renderGmHeaderMeta = (sexObj, ageObj, bioObj) => {
+                if (!isOccupied) return '';
+
+                const sexText = sexObj?.value ? sexObj.value : 'Gender';
+                const sexIcon = sexObj ? (sexObj.isOpen
+                    ? `<i class="fa-solid fa-eye text-[9px] text-emerald-400 ml-1" title="Открыто всем"></i>`
+                    : `<i class="fa-solid fa-lock text-[9px] text-amber-500 ml-1" title="Закрыто"></i>`) : '';
+
+                const ageText = ageObj?.value !== undefined && ageObj?.value !== null && String(ageObj?.value) !== '' ? `${ageObj.value} yrs` : 'Age';
+                const ageIcon = ageObj ? (ageObj.isOpen
+                    ? `<i class="fa-solid fa-eye text-[9px] text-emerald-400 ml-1" title="Открыто всем"></i>`
+                    : `<i class="fa-solid fa-lock text-[9px] text-amber-500 ml-1" title="Закрыто"></i>`) : '';
+
+                const bioText = bioObj?.value ? bioObj.value : 'Biology';
+                const bioIcon = bioObj ? (bioObj.isOpen
+                    ? `<i class="fa-solid fa-eye text-[9px] text-emerald-400 ml-1" title="Открыто всем"></i>`
+                    : `<i class="fa-solid fa-lock text-[9px] text-amber-500 ml-1" title="Закрыто"></i>`) : '';
+
+                return `
+                <div class="flex items-center flex-wrap gap-1.5 mt-1 text-[11px] text-slate-300 font-mono">
+                    <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800 inline-flex items-center" title="${sexText}">
+                        <i class="fa-solid fa-venus-mars mr-1 text-amber-500"></i>${sexText}${sexIcon}
+                    </span>
+                    <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800 inline-flex items-center" title="${ageText}">
+                        <i class="fa-solid fa-cake-candles mr-1 text-amber-500"></i>${ageText}${ageIcon}
+                    </span>
+                    <span class="bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800 inline-flex items-center" title="${bioText}">
+                        <i class="fa-solid fa-dna mr-1 text-amber-500"></i>${bioText}${bioIcon}
+                    </span>
+                </div>
+            `;
+            };
+
             const card = document.createElement('div');
             card.className = `bg-slate-900/95 border rounded p-2.5 flex flex-col justify-between ${
                 isOccupied
@@ -559,15 +648,18 @@
             }`;
 
             const sex = player ? player.sex : null;
+            const biology = player ? player.biology : null;
             const age = player ? player.age : null;
             const profession = player ? player.profession : null;
             const health = player ? player.health : null;
+            const healthScore = player ? player.healthScore : null;
             const hobby = player ? player.hobby : null;
             const phobia = player ? player.phobia : null;
             const baggage = player ? player.baggage : null;
             const fact1 = player ? player.factOne : null;
             const fact2 = player ? player.factTwo : null;
             const votesHtml = isOccupied ? renderVotesBadgeHtml(player, state) : '';
+            const metaHtml = renderGmHeaderMeta(sex, age, biology);
 
             card.innerHTML = `
             <div class="border-b border-slate-800 pb-1.5 mb-1.5 shrink-0">
@@ -583,20 +675,19 @@
                         ${isOccupied ? (isAlive ? 'Alive' : 'Dead / Exiled') : 'Empty'}
                     </span>
                 </div>
+                ${metaHtml}
                 ${votesHtml}
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
                     ${renderGmTraitItem(profession, 'Profession')}
-                    ${renderGmTraitItem(health, 'Health')}
+                    ${renderGmHealthWithScore(health, healthScore)}
                     ${renderGmTraitItem(hobby, 'Hobby')}
                     ${renderGmTraitItem(phobia, 'Phobia')}
                 </div>
 
                 <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
-                    ${renderGmTraitItem(sex, 'Gender')}
-                    ${renderGmTraitItem(age, 'Age')}
                     ${renderGmTraitItem(baggage, 'Baggage')}
                     ${renderGmTraitItem(fact1, 'Fact 1')}
                     ${renderGmTraitItem(fact2, 'Fact 2')}
