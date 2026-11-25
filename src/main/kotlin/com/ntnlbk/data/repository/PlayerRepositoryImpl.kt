@@ -266,36 +266,80 @@ class PlayerRepositoryImpl(
         nickname: String,
         trait: PlayerTraitName
     ): RoomState.Game {
-        val updatedState = game.copy(
-            players = game.players.map {
-                if (it.nickname == nickname) {
-                    when (trait) {
-                        PlayerTraitName.SEX -> it.copy(sex = getRandomTrait(trait).copy(isOpen = it.sex.isOpen))
-                        PlayerTraitName.BIOLOGY -> it.copy(biology = getRandomTrait(trait).copy(isOpen = it.biology.isOpen))
-                        PlayerTraitName.AGE -> it.copy(age = getRandomTrait(trait).copy(isOpen = it.age.isOpen))
-                        PlayerTraitName.PROFESSION -> it.copy(profession = getRandomTrait(trait).copy(isOpen = it.profession.isOpen))
-                        PlayerTraitName.WORK_EXPERIENCE -> it.copy(workExperience = getRandomTrait(trait).copy(isOpen = it.workExperience.isOpen))
-                        PlayerTraitName.HEALTH -> it.copy(health = getRandomTrait(trait).copy(isOpen = it.health.isOpen))
-                        PlayerTraitName.HEALTH_SCORE -> it.copy(healthScore = getRandomTrait(trait).copy(isOpen = it.healthScore.isOpen))
-                        PlayerTraitName.HOBBY -> it.copy(hobby = getRandomTrait(trait).copy(isOpen = it.hobby.isOpen))
-                        PlayerTraitName.PHOBIA -> it.copy(phobia = getRandomTrait(trait).copy(isOpen = it.phobia.isOpen))
-                        PlayerTraitName.BAGGAGE -> it.copy(baggage = getRandomTrait(trait).copy(isOpen = it.baggage.isOpen))
-                        PlayerTraitName.FACT_1 -> it.copy(factOne = getRandomTrait(trait).copy(isOpen = it.factOne.isOpen))
-                        PlayerTraitName.FACT_2 -> it.copy(factTwo = getRandomTrait(trait).copy(isOpen = it.factTwo.isOpen))
-                        PlayerTraitName.SPECIAL_CARD -> throw Exception("Wrong trait name")
-                        PlayerTraitName.BUNKER_DESCRIPTION -> throw Exception("Wrong trait name")
-                        PlayerTraitName.BUNKER_INVENTORY -> throw Exception("Wrong trait name")
-                        PlayerTraitName.CATASTROPHE_DESCRIPTION -> throw Exception("Wrong trait name")
-                    }
-                } else {
-                    it
-                }
+
+        when (trait) {
+            PlayerTraitName.BUNKER_DESCRIPTION -> {
+                val updatedState = game.copy(
+                    bunkerDescription = getRandomTrait(PlayerTraitName.BUNKER_DESCRIPTION).value
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
             }
-        )
-        var room =
-            getRoomUseCase(updatedState.code) ?: throw Exception("Cannot find room with code ${updatedState.code}")
-        room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
-        return room.roomState as RoomState.Game
+
+            PlayerTraitName.BUNKER_INVENTORY -> {
+                val updatedState = game.copy(
+                    bunkerInventory = getRandomTrait(PlayerTraitName.BUNKER_INVENTORY).value
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
+            }
+
+            PlayerTraitName.CATASTROPHE_DESCRIPTION -> {
+                val updatedState = game.copy(
+                    catastropheDescription = getRandomTrait(PlayerTraitName.CATASTROPHE_DESCRIPTION).value
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
+            }
+
+            else -> {
+                val updatedState = game.copy(
+                    players = game.players.map {
+                        if (it.nickname == nickname) {
+                            when (trait) {
+                                PlayerTraitName.SEX -> it.copy(sex = getRandomTrait(trait).copy(isOpen = it.sex.isOpen))
+                                PlayerTraitName.BIOLOGY -> it.copy(biology = getRandomTrait(trait).copy(isOpen = it.biology.isOpen))
+                                PlayerTraitName.AGE -> it.copy(age = getRandomTrait(trait).copy(isOpen = it.age.isOpen))
+                                PlayerTraitName.PROFESSION -> it.copy(profession = getRandomTrait(trait).copy(isOpen = it.profession.isOpen))
+                                PlayerTraitName.WORK_EXPERIENCE -> it.copy(
+                                    workExperience = getRandomTrait(trait).copy(
+                                        isOpen = it.workExperience.isOpen
+                                    )
+                                )
+
+                                PlayerTraitName.HEALTH -> it.copy(health = getRandomTrait(trait).copy(isOpen = it.health.isOpen))
+                                PlayerTraitName.HEALTH_SCORE -> it.copy(healthScore = getRandomTrait(trait).copy(isOpen = it.healthScore.isOpen))
+                                PlayerTraitName.HOBBY -> it.copy(hobby = getRandomTrait(trait).copy(isOpen = it.hobby.isOpen))
+                                PlayerTraitName.PHOBIA -> it.copy(phobia = getRandomTrait(trait).copy(isOpen = it.phobia.isOpen))
+                                PlayerTraitName.BAGGAGE -> it.copy(baggage = getRandomTrait(trait).copy(isOpen = it.baggage.isOpen))
+                                PlayerTraitName.FACT_1 -> it.copy(factOne = getRandomTrait(trait).copy(isOpen = it.factOne.isOpen))
+                                PlayerTraitName.FACT_2 -> it.copy(factTwo = getRandomTrait(trait).copy(isOpen = it.factTwo.isOpen))
+                                PlayerTraitName.SPECIAL_CARD -> throw Exception("Wrong trait name")
+                                PlayerTraitName.BUNKER_DESCRIPTION -> throw Exception("Wrong trait name")
+                                PlayerTraitName.BUNKER_INVENTORY -> throw Exception("Wrong trait name")
+                                PlayerTraitName.CATASTROPHE_DESCRIPTION -> throw Exception("Wrong trait name")
+                            }
+                        } else {
+                            it
+                        }
+                    }
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
+            }
+        }
     }
 
     override fun setStringAsTraitForPlayer(
@@ -304,54 +348,92 @@ class PlayerRepositoryImpl(
         trait: PlayerTraitName,
         traitValue: String
     ): RoomState.Game {
-        val updatedState = game.copy(
-            players = game.players.map {
-                if (it.nickname == playerNickname) {
-                    when (trait) {
-                        PlayerTraitName.SEX -> it.copy(sex = PlayerTrait(traitValue, it.sex.isOpen))
-                        PlayerTraitName.BIOLOGY -> it.copy(biology = PlayerTrait(traitValue, it.biology.isOpen))
-                        PlayerTraitName.AGE -> it.copy(age = PlayerTrait(traitValue, it.age.isOpen))
-                        PlayerTraitName.PROFESSION -> it.copy(
-                            profession = PlayerTrait(
-                                traitValue,
-                                it.profession.isOpen
-                            )
-                        )
-
-                        PlayerTraitName.WORK_EXPERIENCE -> it.copy(
-                            workExperience = PlayerTrait(
-                                traitValue,
-                                it.workExperience.isOpen
-                            )
-                        )
-
-                        PlayerTraitName.HEALTH -> it.copy(health = PlayerTrait(traitValue, it.health.isOpen))
-                        PlayerTraitName.HEALTH_SCORE -> it.copy(
-                            healthScore = PlayerTrait(
-                                traitValue,
-                                it.healthScore.isOpen
-                            )
-                        )
-
-                        PlayerTraitName.HOBBY -> it.copy(hobby = PlayerTrait(traitValue, it.hobby.isOpen))
-                        PlayerTraitName.PHOBIA -> it.copy(phobia = PlayerTrait(traitValue, it.phobia.isOpen))
-                        PlayerTraitName.BAGGAGE -> it.copy(baggage = PlayerTrait(traitValue, it.baggage.isOpen))
-                        PlayerTraitName.FACT_1 -> it.copy(factOne = PlayerTrait(traitValue, it.factOne.isOpen))
-                        PlayerTraitName.FACT_2 -> it.copy(factTwo = PlayerTrait(traitValue, it.factTwo.isOpen))
-                        PlayerTraitName.SPECIAL_CARD -> throw Exception("Wrong trait name")
-                        PlayerTraitName.BUNKER_DESCRIPTION -> throw Exception("Wrong trait name")
-                        PlayerTraitName.BUNKER_INVENTORY -> throw Exception("Wrong trait name")
-                        PlayerTraitName.CATASTROPHE_DESCRIPTION -> throw Exception("Wrong trait name")
-                    }
-                } else {
-                    it
-                }
+        when (trait) {
+            PlayerTraitName.BUNKER_DESCRIPTION -> {
+                val updatedState = game.copy(
+                    bunkerDescription = traitValue
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
             }
-        )
-        var room =
-            getRoomUseCase(updatedState.code) ?: throw Exception("Cannot find room with code ${updatedState.code}")
-        room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
-        return room.roomState as RoomState.Game
+
+            PlayerTraitName.BUNKER_INVENTORY -> {
+                val updatedState = game.copy(
+                    bunkerInventory = traitValue
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
+            }
+
+            PlayerTraitName.CATASTROPHE_DESCRIPTION -> {
+                val updatedState = game.copy(
+                    catastropheDescription = traitValue
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
+            }
+
+            else -> {
+                val updatedState = game.copy(
+                    players = game.players.map {
+                        if (it.nickname == playerNickname) {
+                            when (trait) {
+                                PlayerTraitName.SEX -> it.copy(sex = PlayerTrait(traitValue, it.sex.isOpen))
+                                PlayerTraitName.BIOLOGY -> it.copy(biology = PlayerTrait(traitValue, it.biology.isOpen))
+                                PlayerTraitName.AGE -> it.copy(age = PlayerTrait(traitValue, it.age.isOpen))
+                                PlayerTraitName.PROFESSION -> it.copy(
+                                    profession = PlayerTrait(
+                                        traitValue,
+                                        it.profession.isOpen
+                                    )
+                                )
+
+                                PlayerTraitName.WORK_EXPERIENCE -> it.copy(
+                                    workExperience = PlayerTrait(
+                                        traitValue,
+                                        it.workExperience.isOpen
+                                    )
+                                )
+
+                                PlayerTraitName.HEALTH -> it.copy(health = PlayerTrait(traitValue, it.health.isOpen))
+                                PlayerTraitName.HEALTH_SCORE -> it.copy(
+                                    healthScore = PlayerTrait(
+                                        traitValue,
+                                        it.healthScore.isOpen
+                                    )
+                                )
+
+                                PlayerTraitName.HOBBY -> it.copy(hobby = PlayerTrait(traitValue, it.hobby.isOpen))
+                                PlayerTraitName.PHOBIA -> it.copy(phobia = PlayerTrait(traitValue, it.phobia.isOpen))
+                                PlayerTraitName.BAGGAGE -> it.copy(baggage = PlayerTrait(traitValue, it.baggage.isOpen))
+                                PlayerTraitName.FACT_1 -> it.copy(factOne = PlayerTrait(traitValue, it.factOne.isOpen))
+                                PlayerTraitName.FACT_2 -> it.copy(factTwo = PlayerTrait(traitValue, it.factTwo.isOpen))
+                                PlayerTraitName.SPECIAL_CARD -> throw Exception("Wrong trait name")
+                                PlayerTraitName.BUNKER_DESCRIPTION -> throw Exception("Wrong trait name")
+                                PlayerTraitName.BUNKER_INVENTORY -> throw Exception("Wrong trait name")
+                                PlayerTraitName.CATASTROPHE_DESCRIPTION -> throw Exception("Wrong trait name")
+                            }
+                        } else {
+                            it
+                        }
+                    }
+                )
+                var room =
+                    getRoomUseCase(updatedState.code)
+                        ?: throw Exception("Cannot find room with code ${updatedState.code}")
+                room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+                return room.roomState as RoomState.Game
+            }
+        }
     }
 
     private fun getRandomAgeGaussian(
