@@ -233,6 +233,55 @@
         </div>
 
         <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+                <h3 class="text-xs font-bold text-amber-400 uppercase">
+                    <i class="fa-solid fa-arrows-rotate mr-1"></i> Mix Trait For Players
+                </h3>
+                <div class="flex items-center space-x-1.5 text-[10px]">
+                    <button type="button"
+                            onclick="selectAllMixPlayers(true)"
+                            class="text-amber-400 hover:text-amber-300 underline">
+                        All
+                    </button>
+                    <span class="text-slate-600">/</span>
+                    <button type="button"
+                            onclick="selectAllMixPlayers(false)"
+                            class="text-slate-400 hover:text-rose-400 underline">
+                        Clear
+                    </button>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <select id="selectMixTraitName" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <option value="">Select Trait...</option>
+                    <option value="profession">Profession</option>
+                    <option value="health">Health</option>
+                    <option value="health_score">Health Score (%)</option>
+                    <option value="hobby">Hobby</option>
+                    <option value="phobia">Phobia</option>
+                    <option value="sex">Gender</option>
+                    <option value="biology">Biology</option>
+                    <option value="age">Age</option>
+                    <option value="baggage">Baggage</option>
+                    <option value="fact_1">Fact 1</option>
+                    <option value="fact_2">Fact 2</option>
+                </select>
+
+                <div id="mixPlayersList"
+                     class="max-h-36 overflow-y-auto bg-slate-900 border border-slate-700 rounded p-1.5 space-y-1 text-xs">
+                    <div class="text-slate-500 italic text-[11px] py-1 px-1">No players yet...</div>
+                </div>
+
+                <button id="mixTraitBtn"
+                        type="button"
+                        onclick="submitMixTrait()"
+                        class="w-full py-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-bold rounded text-xs transition-colors flex items-center justify-center space-x-1">
+                    <i class="fa-solid fa-shuffle"></i><span>MIX TRAIT</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded p-2.5 space-y-2">
             <h3 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-skull mr-1"></i> Survivor Status (Life/Death)</h3>
             <div class="space-y-1.5">
                 <select id="selectStatusPlayer" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">

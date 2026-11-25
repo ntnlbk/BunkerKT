@@ -60,6 +60,14 @@ sealed interface ClientMessage {
         val value: String,
     ) : ClientMessage
 
+    @Serializable
+    @SerialName("MIX_TRAIT_FOR_PLAYERS")
+    data class MixTraitForPlayers(
+        val traitName: PlayerTraitName,
+        val nicknames: List<String>
+    ) : ClientMessage
+
+
 }
 
 @Serializable

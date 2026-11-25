@@ -436,6 +436,81 @@ class PlayerRepositoryImpl(
         }
     }
 
+    override fun mixTraitForPlayers(
+        game: RoomState.Game,
+        traitName: PlayerTraitName,
+        playersNicknames: List<String>
+    ): RoomState.Game {
+        when (traitName) {
+            PlayerTraitName.SPECIAL_CARD,
+            PlayerTraitName.BUNKER_DESCRIPTION,
+            PlayerTraitName.BUNKER_INVENTORY,
+            PlayerTraitName.CATASTROPHE_DESCRIPTION -> throw Exception("Wrong trait name")
+            else -> Unit
+        }
+
+        val targetSet = playersNicknames.toSet()
+        if (targetSet.size < 2) {
+            return game
+        }
+
+        fun extractTrait(player: Player): PlayerTrait = when (traitName) {
+            PlayerTraitName.SEX -> player.sex
+            PlayerTraitName.BIOLOGY -> player.biology
+            PlayerTraitName.AGE -> player.age
+            PlayerTraitName.PROFESSION -> player.profession
+            PlayerTraitName.WORK_EXPERIENCE -> player.workExperience
+            PlayerTraitName.HEALTH -> player.health
+            PlayerTraitName.HEALTH_SCORE -> player.healthScore
+            PlayerTraitName.HOBBY -> player.hobby
+            PlayerTraitName.PHOBIA -> player.phobia
+            PlayerTraitName.BAGGAGE -> player.baggage
+            PlayerTraitName.FACT_1 -> player.factOne
+            PlayerTraitName.FACT_2 -> player.factTwo
+            else -> throw Exception("Wrong trait name")
+        }
+
+        fun applyTrait(player: Player, trait: PlayerTrait): Player = when (traitName) {
+            PlayerTraitName.SEX -> player.copy(sex = trait)
+            PlayerTraitName.BIOLOGY -> player.copy(biology = trait)
+            PlayerTraitName.AGE -> player.copy(age = trait)
+            PlayerTraitName.PROFESSION -> player.copy(profession = trait)
+            PlayerTraitName.WORK_EXPERIENCE -> player.copy(workExperience = trait)
+            PlayerTraitName.HEALTH -> player.copy(health = trait)
+            PlayerTraitName.HEALTH_SCORE -> player.copy(healthScore = trait)
+            PlayerTraitName.HOBBY -> player.copy(hobby = trait)
+            PlayerTraitName.PHOBIA -> player.copy(phobia = trait)
+            PlayerTraitName.BAGGAGE -> player.copy(baggage = trait)
+            PlayerTraitName.FACT_1 -> player.copy(factOne = trait)
+            PlayerTraitName.FACT_2 -> player.copy(factTwo = trait)
+            else -> throw Exception("Wrong trait name")
+        }
+
+        val selectedPlayers = game.players.filter { it.nickname in targetSet }
+        if (selectedPlayers.size < 2) {
+            return game
+        }
+
+        val shuffledValues = selectedPlayers.map { extractTrait(it).value }.shuffled()
+        val iterator = shuffledValues.iterator()
+
+        val updatedPlayers = game.players.map { player ->
+            if (player.nickname in targetSet && iterator.hasNext()) {
+                val currentTrait = extractTrait(player)
+                val nextValue = iterator.next()
+                applyTrait(player, currentTrait.copy(value = nextValue))
+            } else {
+                player
+            }
+        }
+
+        val updatedState = game.copy(players = updatedPlayers)
+        var room = getRoomUseCase(updatedState.code)
+            ?: throw Exception("Cannot find room with code ${updatedState.code}")
+        room = updateRoomUseCase(room.code, room.copy(roomState = updatedState))
+        return room.roomState as RoomState.Game
+    }
+
     private fun getRandomAgeGaussian(
         min: Int,
         max: Int,

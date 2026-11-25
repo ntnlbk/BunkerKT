@@ -4,6 +4,7 @@ import com.ntnlbk.data.repository.PlayerRepositoryImpl
 import com.ntnlbk.domain.repository.PlayerRepository
 import com.ntnlbk.domain.usecase.player.CreatePlayerUseCase
 import com.ntnlbk.domain.usecase.player.GetRandomTraitUseCase
+import com.ntnlbk.domain.usecase.player.MixTraitForPlayersUseCase
 import com.ntnlbk.domain.usecase.player.SetIsAliveTraitUseCase
 import com.ntnlbk.domain.usecase.player.SetRandomTraitForPlayerUseCase
 import com.ntnlbk.domain.usecase.player.SetStringAsTraitForPlayerUseCase
@@ -20,4 +21,5 @@ val playerModule = module {
     factory { VoteAgainstUseCase(get()) }
     factory { SetRandomTraitForPlayerUseCase(get()) }
     factory { SetStringAsTraitForPlayerUseCase(get()) }
+    factory { MixTraitForPlayersUseCase(get()) }
 }

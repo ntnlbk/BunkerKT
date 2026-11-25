@@ -128,6 +128,91 @@ function syncForceVoteSelects(players) {
     }
 }
 
+function syncMixPlayersList(players) {
+    const container = document.getElementById('mixPlayersList');
+    const mixBtn = document.getElementById('mixTraitBtn');
+    if (!container) return;
+
+    const previouslyChecked = new Set(
+        Array.from(container.querySelectorAll('input[type="checkbox"][data-nickname]:checked'))
+            .map(cb => cb.getAttribute('data-nickname'))
+    );
+
+    if (!Array.isArray(players) || players.length === 0) {
+        container.innerHTML = `<div class="text-slate-500 italic text-[11px] py-1 px-1">No players yet...</div>`;
+        if (mixBtn) mixBtn.disabled = true;
+        return;
+    }
+
+    container.innerHTML = players.map((player, index) => {
+        const slotNumber = index + 1;
+        const checkedAttr = previouslyChecked.has(player.nickname) ? 'checked' : '';
+        const statusLabel = player.isAlive
+            ? `<span class="text-[9px] text-emerald-400">Alive</span>`
+            : `<span class="text-[9px] text-rose-400">Dead</span>`;
+
+        return `
+            <label class="flex items-center justify-between gap-2 px-1.5 py-1 rounded hover:bg-slate-800/80 cursor-pointer select-none">
+                <span class="flex items-center space-x-2 min-w-0">
+                    <input type="checkbox"
+                           data-nickname="${player.nickname.replace(/"/g, '&quot;')}"
+                           ${checkedAttr}
+                           class="accent-amber-500 rounded cursor-pointer shrink-0">
+                    <span class="text-[10px] text-slate-400 shrink-0">#${slotNumber}</span>
+                    <span class="text-slate-200 truncate">${player.nickname}</span>
+                </span>
+                ${statusLabel}
+            </label>
+        `;
+    }).join('');
+
+    if (mixBtn) {
+        mixBtn.disabled = false;
+    }
+}
+
+function selectAllMixPlayers(checked) {
+    const container = document.getElementById('mixPlayersList');
+    if (!container) return;
+    container.querySelectorAll('input[type="checkbox"][data-nickname]').forEach(cb => {
+        cb.checked = Boolean(checked);
+    });
+}
+
+function submitMixTrait() {
+    const traitSelect = document.getElementById('selectMixTraitName');
+    const container = document.getElementById('mixPlayersList');
+    if (!traitSelect || !container) return;
+
+    const rawTrait = traitSelect.value;
+    if (!rawTrait) {
+        alert('Choose trait');
+        return;
+    }
+
+    const selectedNicknames = Array.from(
+        container.querySelectorAll('input[type="checkbox"][data-nickname]:checked')
+    ).map(cb => cb.getAttribute('data-nickname'));
+
+    if (selectedNicknames.length < 2) {
+        alert('Select at least 2 players to mix trait');
+        return;
+    }
+
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+        console.warn('WebSocket does not run');
+        return;
+    }
+
+    const message = {
+        type: "MIX_TRAIT_FOR_PLAYERS",
+        traitName: rawTrait.toUpperCase(),
+        nicknames: selectedNicknames
+    };
+
+    ws.send(JSON.stringify(message));
+}
+
 function sendVote(voterNickname, targetNickname) {
     if (!voterNickname || !targetNickname) {
         alert('Choose both voter and target');
@@ -249,6 +334,7 @@ function renderGmState(state) {
     }
 
     syncForceVoteSelects(players);
+    syncMixPlayersList(players);
 
     const grid = document.getElementById('playersGrid');
     if (!grid) return;
@@ -403,15 +489,15 @@ function renderGmState(state) {
                 ${votesHtml}
             </div>
 
-            <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
+            <div class="grid grid-cols-2 gap-2 text-xs flex-1">
+                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-start space-y-1">
                     ${renderGmTraitItem(profession, 'Profession')}
                     ${renderGmHealthWithScore(health, healthScore)}
                     ${renderGmTraitItem(hobby, 'Hobby')}
                     ${renderGmTraitItem(phobia, 'Phobia')}
                 </div>
 
-                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-between space-y-1">
+                <div class="flex flex-col bg-slate-950/80 p-2 rounded border border-slate-800 justify-start space-y-1">
                     ${renderGmTraitItem(baggage, 'Baggage')}
                     ${renderGmTraitItem(fact1, 'Fact 1')}
                     ${renderGmTraitItem(fact2, 'Fact 2')}

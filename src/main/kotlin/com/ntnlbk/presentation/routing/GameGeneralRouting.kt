@@ -8,6 +8,7 @@ import com.ntnlbk.domain.usecase.player.SetRandomTraitForPlayerUseCase
 import com.ntnlbk.domain.usecase.player.SetStringAsTraitForPlayerUseCase
 import com.ntnlbk.domain.usecase.player.SetTraitIsOpenUseCase
 import com.ntnlbk.domain.usecase.game.StartVotingUseCase
+import com.ntnlbk.domain.usecase.player.MixTraitForPlayersUseCase
 import com.ntnlbk.domain.usecase.player.VoteAgainstUseCase
 import com.ntnlbk.presentation.dto.mapper.GameDTOMapper
 import com.ntnlbk.presentation.dto.websocket.ClientMessage
@@ -29,7 +30,8 @@ fun Route.gameGeneralRouting(
     endVotingUseCase: EndVotingUseCase,
     voteAgainstUseCase: VoteAgainstUseCase,
     setRandomTraitForPlayerUseCase: SetRandomTraitForPlayerUseCase,
-    setStringAsTraitForPlayerUseCase: SetStringAsTraitForPlayerUseCase
+    setStringAsTraitForPlayerUseCase: SetStringAsTraitForPlayerUseCase,
+    mixTraitForPlayersUseCase: MixTraitForPlayersUseCase,
 ) {
 
     val webSocketJson = Json {
@@ -158,6 +160,20 @@ fun Route.gameGeneralRouting(
                                 clientMessage.nickname,
                                 clientMessage.traitName,
                                 clientMessage.value
+                            )
+                            val response: ServerMessage = GameState(
+                                gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)
+                            )
+                            wsManager.broadcast(roomCode, response)
+                        }
+
+                        is ClientMessage.MixTraitForPlayers -> {
+                            val room = getRoomUseCase(roomCode)
+                                ?: throw IllegalArgumentException("Unknown room code $roomCode")
+                            val gameStateUpdated = mixTraitForPlayersUseCase(
+                                room.roomState as RoomState.Game,
+                                clientMessage.traitName,
+                                clientMessage.nicknames
                             )
                             val response: ServerMessage = GameState(
                                 gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)

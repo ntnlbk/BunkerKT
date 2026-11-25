@@ -30,4 +30,6 @@ interface PlayerRepository {
         trait: PlayerTraitName,
         traitValue: String,
     ): RoomState.Game
+
+    fun mixTraitForPlayers(game: RoomState.Game, traitName: PlayerTraitName, playersNicknames: List<String>): RoomState.Game
 }
