@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val gameModule = module {
 
-    single<GameRepository> { GameRepositoryImpl(get(), get(), get(), get()) }
+    single<GameRepository> { GameRepositoryImpl(get(), get(), get(), get(), get()) }
 
     single { StartGameUseCase(get()) }
     single { StartVotingUseCase(get()) }

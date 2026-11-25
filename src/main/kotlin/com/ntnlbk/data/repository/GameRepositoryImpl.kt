@@ -1,7 +1,9 @@
 package com.ntnlbk.data.repository
 
 import com.ntnlbk.domain.model.*
+import com.ntnlbk.domain.model.endgame.EndGame
 import com.ntnlbk.domain.repository.GameRepository
+import com.ntnlbk.domain.usecase.endgame.GenerateStoryUseCase
 import com.ntnlbk.domain.usecase.player.CreatePlayerUseCase
 import com.ntnlbk.domain.usecase.player.GetRandomTraitUseCase
 import com.ntnlbk.domain.usecase.room.GetRoomUseCase
@@ -12,6 +14,7 @@ class GameRepositoryImpl(
     private val createPlayerUseCase: CreatePlayerUseCase,
     private val getRandomTraitUseCase: GetRandomTraitUseCase,
     private val getRoomUseCase: GetRoomUseCase,
+    private val generateStoryUseCase: GenerateStoryUseCase
 ) : GameRepository {
 
     override fun startGame(room: Room): RoomState.Game {
@@ -51,4 +54,9 @@ class GameRepositoryImpl(
         return updatedRoom.roomState as RoomState.Game
     }
 
+    override suspend fun endGame(gameState: RoomState.Game): EndGame {
+        return generateStoryUseCase(
+            context = TODO()
+        )
+    }
 }

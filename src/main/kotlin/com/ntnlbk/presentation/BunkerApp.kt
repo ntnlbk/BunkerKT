@@ -1,6 +1,7 @@
 package com.ntnlbk.presentation
 
 import com.ntnlbk.di.dbModule
+import com.ntnlbk.di.endGameModule
 import com.ntnlbk.di.gameModule
 import com.ntnlbk.di.playerModule
 import com.ntnlbk.di.presentationModule
@@ -36,7 +37,7 @@ fun main() {
     println("Hello World!")
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
         install(Koin) {
-            modules(playerModule, dbModule, roomModule, presentationModule, gameModule)
+            modules(playerModule, dbModule, roomModule, presentationModule, gameModule, endGameModule)
         }
         configureSerialization()
         configureWebSockets()
