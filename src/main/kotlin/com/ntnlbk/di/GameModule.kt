@@ -3,6 +3,7 @@ package com.ntnlbk.di
 
 import com.ntnlbk.data.repository.GameRepositoryImpl
 import com.ntnlbk.domain.repository.GameRepository
+import com.ntnlbk.domain.usecase.game.EndGameUseCase
 import com.ntnlbk.domain.usecase.game.EndVotingUseCase
 import com.ntnlbk.domain.usecase.game.StartGameUseCase
 import com.ntnlbk.domain.usecase.game.StartVotingUseCase
@@ -15,4 +16,5 @@ val gameModule = module {
     single { StartGameUseCase(get()) }
     single { StartVotingUseCase(get()) }
     single { EndVotingUseCase(get()) }
+    single { EndGameUseCase(get()) }
 }

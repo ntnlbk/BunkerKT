@@ -67,6 +67,12 @@ sealed interface ClientMessage {
         val nicknames: List<String>
     ) : ClientMessage
 
+    @Serializable
+    @SerialName("ENDGAME")
+    data class EndGame(
+        val generateArts: Boolean = true,
+    ): ClientMessage
+
 
 }
 

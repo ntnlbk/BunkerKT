@@ -1,6 +1,7 @@
 package com.ntnlbk.presentation.routing
 
 import com.ntnlbk.domain.model.RoomState
+import com.ntnlbk.domain.usecase.game.EndGameUseCase
 import com.ntnlbk.domain.usecase.game.EndVotingUseCase
 import com.ntnlbk.domain.usecase.room.GetRoomUseCase
 import com.ntnlbk.domain.usecase.player.SetIsAliveTraitUseCase
@@ -32,6 +33,7 @@ fun Route.gameGeneralRouting(
     setRandomTraitForPlayerUseCase: SetRandomTraitForPlayerUseCase,
     setStringAsTraitForPlayerUseCase: SetStringAsTraitForPlayerUseCase,
     mixTraitForPlayersUseCase: MixTraitForPlayersUseCase,
+    endGameUseCase: EndGameUseCase
 ) {
 
     val webSocketJson = Json {
@@ -42,7 +44,6 @@ fun Route.gameGeneralRouting(
 
     webSocket("/ws/game/{code}/{nickname}") {
         val roomCode = call.parameters["code"] ?: throw IllegalArgumentException("Missing room code")
-        val nickname = call.parameters["nickname"] ?: throw IllegalArgumentException("Missing username")
         wsManager.addSession(roomCode, this)
         try {
             for (frame in incoming) {
@@ -179,6 +180,12 @@ fun Route.gameGeneralRouting(
                                 gameDTOMapper.mapDomainGameStateToGameStateDTO(gameStateUpdated)
                             )
                             wsManager.broadcast(roomCode, response)
+                        }
+
+                        is ClientMessage.EndGame -> {
+                            val room = getRoomUseCase(roomCode)
+                                ?: throw IllegalArgumentException("Unknown room code $roomCode")
+                            val final = endGameUseCase(room.roomState as RoomState.Game, true)
                         }
                     }
                 }

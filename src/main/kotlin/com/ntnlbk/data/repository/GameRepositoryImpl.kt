@@ -2,6 +2,7 @@ package com.ntnlbk.data.repository
 
 import com.ntnlbk.domain.model.*
 import com.ntnlbk.domain.model.endgame.EndGame
+import com.ntnlbk.domain.model.endgame.EndGameContext
 import com.ntnlbk.domain.repository.GameRepository
 import com.ntnlbk.domain.usecase.endgame.GenerateStoryUseCase
 import com.ntnlbk.domain.usecase.player.CreatePlayerUseCase
@@ -54,9 +55,17 @@ class GameRepositoryImpl(
         return updatedRoom.roomState as RoomState.Game
     }
 
-    override suspend fun endGame(gameState: RoomState.Game): EndGame {
+    override suspend fun endGame(gameState: RoomState.Game, generateArts: Boolean): EndGame {
+        val survivors = gameState.players.filter { it.isAlive }
+
         return generateStoryUseCase(
-            context = TODO()
+            context = EndGameContext(
+                players = survivors,
+                catastropheDescription = gameState.catastropheDescription,
+                bunkerDescription = gameState.bunkerDescription,
+                bunkerInventory = gameState.bunkerInventory,
+                generateArts = generateArts
+            )
         )
     }
 }

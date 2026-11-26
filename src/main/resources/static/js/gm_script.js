@@ -106,11 +106,14 @@ function syncForceVoteSelects(players) {
     const prevTarget = targetSelect.value;
 
     const alivePlayers = players
-        .map((player, index) => ({ player, slotNumber: index + 1 }))
-        .filter(({ player }) => player && player.isAlive);
+        .map((player, index) => ({player, slotNumber: index + 1}))
+        .filter(({player}) => player && player.isAlive);
 
     const optionsHtml = alivePlayers
-        .map(({ player, slotNumber }) => `<option value="${player.nickname.replace(/"/g, '&quot;')}">#${slotNumber} ${player.nickname}</option>`)
+        .map(({
+                  player,
+                  slotNumber
+              }) => `<option value="${player.nickname.replace(/"/g, '&quot;')}">#${slotNumber} ${player.nickname}</option>`)
         .join('');
 
     voterSelect.innerHTML = `<option value="">Select voter...</option>${optionsHtml}`;
@@ -509,6 +512,7 @@ function renderGmState(state) {
 }
 
 let ws;
+
 function initWebSocket() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     ws = new WebSocket(`${protocol}//${window.location.host}/ws/game/${roomCode}/${encodeURIComponent(currentUsername)}`);
@@ -563,6 +567,14 @@ function endVoting() {
         type: "END_VOTING"
     };
     ws.send(JSON.stringify(message));
+}
+
+function endGame(generateArts) {
+    const message = {
+        type: "ENDGAME",
+        generateArts: generateArts
+    }
+    ws.send(JSON.stringify(message))
 }
 
 function mockRevealTrait() {

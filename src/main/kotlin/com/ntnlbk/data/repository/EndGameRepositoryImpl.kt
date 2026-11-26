@@ -6,7 +6,7 @@ import com.ntnlbk.domain.repository.EndGameRepository
 
 class EndGameRepositoryImpl : EndGameRepository {
     override suspend fun generateStory(context: EndGameContext): EndGame {
-        TODO("Not yet implemented")
+        TODO("Not yet implemented AI INTEGRATION")
     }
 
 }
